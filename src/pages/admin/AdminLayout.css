@@ -131,3 +131,68 @@
   margin-bottom: 24px;
   color: var(--trust-navy);
 }
+
+/* ===== MOBILE ADMIN ===== */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+  }
+
+  .admin-logo-container {
+    padding: 16px;
+  }
+
+  .admin-logo {
+    font-size: 1.25rem;
+  }
+
+  .admin-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 4px;
+  }
+
+  .admin-nav-item {
+    flex: 1;
+    min-width: 100px;
+    justify-content: center;
+    font-size: 0.8rem;
+    padding: 10px 8px;
+    gap: 6px;
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .admin-sidebar-footer {
+    display: none; /* Hide "Voltar à Loja" in mobile nav, too cluttered */
+  }
+
+  .admin-topbar {
+    padding: 0 16px;
+    height: 56px;
+  }
+
+  .admin-content-wrapper {
+    padding: 16px;
+  }
+
+  .admin-card {
+    padding: 16px;
+  }
+
+  .admin-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+

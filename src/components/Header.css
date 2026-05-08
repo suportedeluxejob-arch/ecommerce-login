@@ -137,13 +137,45 @@
 }
 
 @media (max-width: 768px) {
+  .top-bar {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+  }
+
   .main-header {
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
+    padding: 12px 4%;
   }
-  
+
+  .logo-container {
+    flex: 1;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+
+  .actions-container {
+    flex: 0;
+  }
+
+  .action-text {
+    display: none;
+  }
+
   .search-container {
     order: 3;
-    flex: 100%;
+    flex: 0 0 100%;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .search-input {
+    padding: 10px 14px;
+    font-size: 16px; /* Prevents iOS zoom on input focus */
   }
 }
+

@@ -261,3 +261,43 @@ input:focus {
     top: 0;
   }
 }
+
+@media (max-width: 600px) {
+  .checkout-container {
+    padding: 20px 4%;
+  }
+
+  .checkout-form {
+    padding: 20px 16px;
+  }
+
+  .checkout-title {
+    font-size: 1.5rem;
+  }
+
+  .input-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .input-half,
+  .input-third,
+  .input-two-thirds {
+    flex: unset;
+    width: 100%;
+  }
+
+  input, select, textarea {
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+
+  .summary-card {
+    padding: 20px 16px;
+  }
+
+  .finish-buy-btn {
+    font-size: 1.05rem;
+    padding: 16px;
+  }
+}
+

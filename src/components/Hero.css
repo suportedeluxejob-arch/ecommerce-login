@@ -135,7 +135,7 @@
 @media (max-width: 900px) {
   .hero-grid {
     grid-template-columns: 1fr;
-    grid-template-rows: 400px 250px 250px;
+    grid-template-rows: 320px 200px 200px;
     height: auto;
   }
   
@@ -154,3 +154,28 @@
     grid-row: 3 / 4;
   }
 }
+
+@media (max-width: 600px) {
+  .hero-section {
+    padding: 12px 4%;
+  }
+
+  .hero-grid {
+    grid-template-rows: 260px 160px 160px;
+    gap: 12px;
+  }
+
+  .hero-title {
+    font-size: 1.6rem;
+  }
+
+  .hero-content {
+    padding: 24px 20px;
+  }
+
+  .hero-btn {
+    padding: 10px 18px;
+    font-size: 0.9rem;
+  }
+}
+
