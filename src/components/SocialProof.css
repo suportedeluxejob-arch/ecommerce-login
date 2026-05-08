@@ -1,0 +1,85 @@
+.social-proof-section {
+  padding: 60px 5%;
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 24px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+.security-badges {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+.badge-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.inmetro-logo {
+  height: 40px;
+  object-fit: contain;
+}
+
+.badge-text h4 {
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.badge-text p {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.text-center {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.review-card {
+  background-color: var(--bg-offwhite);
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.review-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.review-author {
+  font-weight: 600;
+  color: var(--trust-navy);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .security-badges {
+    gap: 30px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

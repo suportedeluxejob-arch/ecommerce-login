@@ -1,0 +1,263 @@
+.checkout-layout {
+  min-height: 100vh;
+  background-color: var(--bg-offwhite);
+}
+
+.checkout-header {
+  background-color: white;
+  padding: 20px 5%;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkout-logo {
+  text-decoration: none;
+}
+
+.secure-checkout-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cta-green);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.checkout-container {
+  padding: 40px 5%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.checkout-title {
+  font-size: 2rem;
+  color: var(--trust-navy);
+  margin-bottom: 8px;
+}
+
+.checkout-subtitle {
+  color: var(--text-light);
+  margin-bottom: 32px;
+}
+
+.checkout-form {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.form-section {
+  margin-bottom: 32px;
+}
+
+.form-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  color: var(--trust-navy);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.input-half {
+  flex: 1;
+}
+
+.input-third {
+  flex: 1;
+}
+
+.input-two-thirds {
+  flex: 2;
+}
+
+input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  border-color: var(--trust-navy);
+}
+
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.payment-method.selected {
+  border-color: var(--cta-orange);
+  background-color: #fff9f6;
+}
+
+.finish-buy-btn {
+  background-color: var(--cta-green);
+  color: white;
+  width: 100%;
+  padding: 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 12px;
+  margin-top: 16px;
+  transition: background-color 0.2s;
+}
+
+.finish-buy-btn:hover {
+  background-color: #00965e;
+}
+
+.summary-card {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  position: sticky;
+  top: 40px;
+}
+
+.summary-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 24px;
+  color: var(--trust-navy);
+}
+
+.summary-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.summary-item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.summary-item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-item-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.summary-item-qty {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.summary-item-price {
+  font-weight: 600;
+}
+
+.summary-totals {
+  border-top: 1px solid var(--border-color);
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+}
+
+.summary-row.highlight span:last-child {
+  color: var(--cta-green);
+  font-weight: 600;
+}
+
+.summary-row.total {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--trust-navy);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-color);
+}
+
+.trust-footer {
+  margin-top: 32px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.trust-icon {
+  color: var(--trust-navy);
+  flex-shrink: 0;
+}
+
+.trust-footer p {
+  font-size: 0.85rem;
+  color: var(--text-dark);
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .summary-card {
+    position: relative;
+    top: 0;
+  }
+}
