@@ -3,8 +3,10 @@ import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../firebaseConfig';
 import { mockProducts } from '../../data/mockProducts'; // For seeding
-import { Plus, Edit, Trash2, Upload, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, X, HelpCircle, Tag } from 'lucide-react';
 import './AdminProducts.css';
+
+type FAQItem = { question: string; answer: string };
 
 export function AdminProducts() {
   const [products, setProducts] = useState<any[]>([]);
@@ -23,6 +25,21 @@ export function AdminProducts() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // Promo Badge (effeito02)
+  const [promoBadgeEnabled, setPromoBadgeEnabled] = useState(false);
+  const [promoBadgeText, setPromoBadgeText] = useState('');
+
+  // Gift Badge (effeito-ok / Brinde)
+  const [giftBadgeEnabled, setGiftBadgeEnabled] = useState(false);
+
+  // FAQ Accordion (effeito01)
+  const [faqItems, setFaqItems] = useState<FAQItem[]>([
+    { question: 'Este produto é seguro para bebês e crianças pequenas?', answer: 'Sim! Todos os nossos produtos possuem certificação do Inmetro e são fabricados com materiais atóxicos e livres de BPA.' },
+    { question: 'Qual é o prazo de entrega?', answer: 'Em capitais: 3 a 5 dias úteis. Demais localidades: 5 a 10 dias úteis após confirmação do pagamento.' },
+    { question: 'Posso trocar ou devolver o produto?', answer: 'Sim! Você tem 7 dias corridos após o recebimento para solicitar troca ou devolução, sem custo adicional.' },
+    { question: 'O produto é fiel às fotos?', answer: 'Sim! Todas as fotos são do produto real, sem filtros. Você receberá exatamente o que está vendo.' },
+  ]);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -118,15 +135,16 @@ export function AdminProducts() {
         category,
         images: images,
         isActive: true,
-        tags: tags.split(',').map(t => t.trim()).filter(t => t)
+        tags: tags.split(',').map(t => t.trim()).filter(t => t),
+        promoBadge: { enabled: promoBadgeEnabled, text: promoBadgeText.trim() },
+        giftBadge: { enabled: giftBadgeEnabled },
+        faqItems: faqItems.filter(f => f.question.trim() && f.answer.trim()),
       };
 
       if (editingId) {
-        // Modo Edição
         await updateDoc(doc(db, 'products', editingId), productData);
         alert("Produto atualizado com sucesso!");
       } else {
-        // Modo Criação
         await addDoc(collection(db, 'products'), productData);
         alert("Produto cadastrado com sucesso!");
       }
@@ -142,9 +160,27 @@ export function AdminProducts() {
     }
   };
 
+  // ── FAQ helpers ──
+  const addFAQItem = () =>
+    setFaqItems(prev => [...prev, { question: '', answer: '' }]);
+
+  const removeFAQItem = (idx: number) =>
+    setFaqItems(prev => prev.filter((_, i) => i !== idx));
+
+  const updateFAQItem = (idx: number, field: 'question' | 'answer', value: string) =>
+    setFaqItems(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item));
+
   const resetForm = () => {
     setEditingId(null);
     setName(''); setPrice(''); setOriginalPrice(''); setStock(''); setDescription(''); setImages([]); setTags('');
+    setPromoBadgeEnabled(false); setPromoBadgeText('');
+    setGiftBadgeEnabled(false);
+    setFaqItems([
+      { question: 'Este produto é seguro para bebês e crianças pequenas?', answer: 'Sim! Todos os nossos produtos possuem certificação do Inmetro e são fabricados com materiais atóxicos e livres de BPA.' },
+      { question: 'Qual é o prazo de entrega?', answer: 'Em capitais: 3 a 5 dias úteis. Demais localidades: 5 a 10 dias úteis após confirmação do pagamento.' },
+      { question: 'Posso trocar ou devolver o produto?', answer: 'Sim! Você tem 7 dias corridos após o recebimento para solicitar troca ou devolução, sem custo adicional.' },
+      { question: 'O produto é fiel às fotos?', answer: 'Sim! Todas as fotos são do produto real, sem filtros. Você receberá exatamente o que está vendo.' },
+    ]);
   };
 
   const handleNewClick = () => {
@@ -161,6 +197,15 @@ export function AdminProducts() {
     setDescription(product.description || '');
     setImages(product.images || []);
     setTags(product.tags ? product.tags.join(', ') : '');
+    setPromoBadgeEnabled(product.promoBadge?.enabled || false);
+    setPromoBadgeText(product.promoBadge?.text || '');
+    setGiftBadgeEnabled(product.giftBadge?.enabled || false);
+    setFaqItems(product.faqItems && product.faqItems.length > 0 ? product.faqItems : [
+      { question: 'Este produto é seguro para bebês e crianças pequenas?', answer: 'Sim! Todos os nossos produtos possuem certificação do Inmetro e são fabricados com materiais atóxicos e livres de BPA.' },
+      { question: 'Qual é o prazo de entrega?', answer: 'Em capitais: 3 a 5 dias úteis. Demais localidades: 5 a 10 dias úteis após confirmação do pagamento.' },
+      { question: 'Posso trocar ou devolver o produto?', answer: 'Sim! Você tem 7 dias corridos após o recebimento para solicitar troca ou devolução, sem custo adicional.' },
+      { question: 'O produto é fiel às fotos?', answer: 'Sim! Todas as fotos são do produto real, sem filtros. Você receberá exatamente o que está vendo.' },
+    ]);
     setShowModal(true);
   };
 
@@ -316,6 +361,101 @@ export function AdminProducts() {
               <div className="form-group">
                 <label>Descrição</label>
                 <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} required />
+              </div>
+
+              {/* ── PROMO BADGE (effeito02) ── */}
+              <div className="admin-feature-section">
+                <div className="admin-feature-header">
+                  <Tag size={18} />
+                  <h4>Badge de Promoção</h4>
+                  <label className="admin-toggle">
+                    <input
+                      type="checkbox"
+                      checked={promoBadgeEnabled}
+                      onChange={(e) => setPromoBadgeEnabled(e.target.checked)}
+                    />
+                    <span className="admin-toggle__slider" />
+                    <span>{promoBadgeEnabled ? 'Ativado' : 'Desativado'}</span>
+                  </label>
+                </div>
+                <p className="admin-feature-desc">
+                  Exibe um badge animado de destaque próximo ao preço. Ótimo para promoções por tempo limitado.
+                </p>
+                {promoBadgeEnabled && (
+                  <div className="form-group" style={{ marginTop: 12 }}>
+                    <label>Texto do Badge</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: 🔥 Promoção especial – 47% OFF! Aproveite enquanto durar."
+                      value={promoBadgeText}
+                      onChange={(e) => setPromoBadgeText(e.target.value)}
+                    />
+                    <span className="input-hint">Deixe em branco para gerar automaticamente com base no desconto.</span>
+                  </div>
+                )}
+              </div>
+
+              {/* ── GIFT BADGE (effeito-ok / Brinde) ── */}
+              <div className="admin-feature-section">
+                <div className="admin-feature-header">
+                  <span style={{fontSize: 18}}>🎁</span>
+                  <h4>Brinde Incluso</h4>
+                  <label className="admin-toggle">
+                    <input
+                      type="checkbox"
+                      checked={giftBadgeEnabled}
+                      onChange={(e) => setGiftBadgeEnabled(e.target.checked)}
+                    />
+                    <span className="admin-toggle__slider" />
+                    <span>{giftBadgeEnabled ? 'Ativado' : 'Desativado'}</span>
+                  </label>
+                </div>
+                <p className="admin-feature-desc">
+                  Exibe um selo interativo e animado indicando que o cliente receberá um brinde exclusivo na compra deste produto.
+                </p>
+              </div>
+
+              {/* ── FAQ ACCORDION (effeito01) ── */}
+              <div className="admin-feature-section">
+                <div className="admin-feature-header">
+                  <HelpCircle size={18} />
+                  <h4>Perguntas Frequentes (FAQ)</h4>
+                </div>
+                <p className="admin-feature-desc">
+                  Aparece na página do produto para quebrar objeções do cliente. Pré-preenchido com respostas padrão que você pode editar.
+                </p>
+                <div className="faq-editor">
+                  {faqItems.map((item, idx) => (
+                    <div key={idx} className="faq-editor__item">
+                      <div className="faq-editor__num">{idx + 1}</div>
+                      <div className="faq-editor__fields">
+                        <input
+                          type="text"
+                          placeholder="Pergunta"
+                          value={item.question}
+                          onChange={(e) => updateFAQItem(idx, 'question', e.target.value)}
+                        />
+                        <textarea
+                          rows={2}
+                          placeholder="Resposta"
+                          value={item.answer}
+                          onChange={(e) => updateFAQItem(idx, 'answer', e.target.value)}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        className="action-icon delete"
+                        onClick={() => removeFAQItem(idx)}
+                        title="Remover pergunta"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                  <button type="button" className="admin-btn secondary faq-add-btn" onClick={addFAQItem}>
+                    <Plus size={16} /> Adicionar Pergunta
+                  </button>
+                </div>
               </div>
 
               <div className="modal-actions">

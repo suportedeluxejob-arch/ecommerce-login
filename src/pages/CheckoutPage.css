@@ -127,6 +127,23 @@ input:focus {
   background-color: #fff9f6;
 }
 
+/* ── Credit Card Panel ── */
+.credit-card-panel {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.35s ease,
+              margin-top 0.35s ease;
+  margin-top: 0;
+}
+
+.credit-card-panel--open {
+  max-height: 900px;
+  opacity: 1;
+  margin-top: 24px;
+}
+
 .finish-buy-btn {
   background-color: var(--cta-green);
   color: white;
@@ -141,6 +158,15 @@ input:focus {
 
 .finish-buy-btn:hover {
   background-color: #00965e;
+}
+
+.finish-buy-btn--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.finish-buy-btn--disabled:hover {
+  background-color: var(--cta-green);
 }
 
 .summary-card {

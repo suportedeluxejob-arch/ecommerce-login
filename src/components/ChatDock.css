@@ -1,0 +1,384 @@
+/* ============================================================
+   CHAT DOCK  –  ChatDock.css
+   Floating mini-chat at bottom-center of storefront
+   ============================================================ */
+
+/* ── Root ─────────────────────────────────────────────── */
+.cd-root {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none; /* let children handle events */
+}
+
+/* ── Dock Bar ──────────────────────────────────────────── */
+.cd-dock {
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 999px;
+  padding: 8px 14px;
+  box-shadow: 0 8px 32px rgba(43, 58, 103, 0.18), 0 2px 8px rgba(0,0,0,0.06);
+  animation: cd-dock-enter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes cd-dock-enter {
+  from { opacity: 0; transform: translateY(40px) scale(0.85); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+.cd-dock__chars {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ── Character button ──────────────────────────────────── */
+.cd-char-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 12px;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.cd-char-btn:hover {
+  transform: translateY(-6px) scale(1.08);
+}
+
+.cd-char-btn--active {
+  transform: translateY(-4px);
+}
+
+.cd-char-emoji {
+  font-size: 2rem;
+  display: block;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+
+.cd-char-dot {
+  position: absolute;
+  bottom: 18px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background: #22c55e;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.25);
+}
+
+.cd-char-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-light);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.cd-char-btn--active .cd-char-name {
+  color: var(--trust-navy);
+}
+
+/* ── Chat Window ───────────────────────────────────────── */
+.cd-window {
+  pointer-events: all;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  background: linear-gradient(160deg, var(--cd-grad-start, #f0f4ff), var(--cd-grad-end, #fff));
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 16px 48px rgba(43, 58, 103, 0.2), 0 4px 12px rgba(0,0,0,0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  /* Hidden state */
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  pointer-events: none;
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: bottom center;
+}
+
+.cd-window--open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+/* ── Header ────────────────────────────────────────────── */
+.cd-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: linear-gradient(to right, var(--cd-grad-start, #f0f4ff), var(--cd-grad-end, #fff));
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+}
+
+.cd-header__avatar {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.12));
+}
+
+.cd-header__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cd-header__name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--trust-navy);
+}
+
+.cd-header__status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.cd-online-dot {
+  width: 7px;
+  height: 7px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: cd-pulse 2s infinite;
+}
+
+@keyframes cd-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.cd-close-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.cd-close-btn:hover {
+  background: rgba(0,0,0,0.06);
+  color: var(--text-dark);
+}
+
+/* ── Messages area ─────────────────────────────────────── */
+.cd-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  scroll-behavior: smooth;
+}
+
+.cd-messages::-webkit-scrollbar { width: 4px; }
+.cd-messages::-webkit-scrollbar-track { background: transparent; }
+.cd-messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
+
+/* ── Bubbles ───────────────────────────────────────────── */
+.cd-bubble {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  animation: cd-bubble-in 0.25s ease forwards;
+}
+
+@keyframes cd-bubble-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cd-bubble--bot {
+  align-self: flex-start;
+}
+
+.cd-bubble--user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.cd-bubble__avatar {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.cd-bubble__text {
+  max-width: 240px;
+  padding: 10px 13px;
+  border-radius: 16px;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  font-family: 'Inter', sans-serif;
+}
+
+.cd-bubble--bot .cd-bubble__text {
+  background: #fff;
+  color: var(--text-dark);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.cd-bubble--user .cd-bubble__text {
+  background: var(--trust-navy);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+/* ── Typing indicator ──────────────────────────────────── */
+.cd-typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 16px;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  width: 56px;
+}
+
+.cd-typing span {
+  width: 7px;
+  height: 7px;
+  background: #cbd5e1;
+  border-radius: 50%;
+  animation: cd-bounce 1.2s infinite;
+  display: block;
+}
+
+.cd-typing span:nth-child(2) { animation-delay: 0.2s; }
+.cd-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes cd-bounce {
+  0%, 60%, 100% { transform: translateY(0); background: #94a3b8; }
+  30%           { transform: translateY(-5px); background: var(--trust-navy); }
+}
+
+/* ── Input row ─────────────────────────────────────────── */
+.cd-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px 14px;
+  border-top: 1px solid rgba(226, 232, 240, 0.7);
+  background: rgba(255,255,255,0.7);
+}
+
+.cd-input {
+  flex: 1;
+  height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cd-input:focus {
+  border-color: var(--trust-navy);
+  box-shadow: 0 0 0 3px rgba(43, 58, 103, 0.1);
+}
+
+.cd-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cd-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--trust-navy);
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.cd-send-btn:hover:not(:disabled) {
+  background: var(--cta-orange);
+  transform: scale(1.08);
+}
+
+.cd-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Mobile adjustments ─────────────────────────────────── */
+@media (max-width: 480px) {
+  .cd-root {
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vw - 32px);
+    align-items: stretch;
+  }
+
+  .cd-dock {
+    padding: 8px 14px;
+    gap: 10px;
+    border-radius: 20px;
+  }
+
+  .cd-dock__label {
+    display: none;
+  }
+
+  .cd-dock__chars {
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .cd-window {
+    width: 100%;
+    max-height: 60vh;
+  }
+
+  .cd-messages {
+    max-height: 220px;
+  }
+}

@@ -1,0 +1,328 @@
+/* ============================================================
+   CREDIT CARD FORM  –  CreditCardForm.css
+   ============================================================ */
+
+/* Root wrapper: card on top, form below */
+.ccf-root {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+}
+
+/* ── CARD SHELL ─────────────────────────────────────────── */
+.ccf-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  perspective: 1100px;
+  transform-style: preserve-3d;
+  transition: transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1);
+  height: 224px;
+}
+
+.ccf-card--flip {
+  transform: rotateY(180deg);
+}
+
+/* Shared face styles */
+.ccf-card__front,
+.ccf-card__back {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  padding: 22px 26px 26px;
+  background: linear-gradient(135deg, var(--trust-navy) 0%, #1a2a5e 60%, #0d1a3a 100%);
+  box-shadow: 0 24px 48px -10px rgba(43, 58, 103, 0.55);
+  color: #fff;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Decorative rings – front */
+.ccf-card__front::before {
+  content: "";
+  position: absolute;
+  border: 18px solid var(--cta-orange);
+  border-radius: 50%;
+  width: 280px;
+  height: 280px;
+  top: -90px;
+  left: -80px;
+  filter: blur(14px);
+  opacity: 0.35;
+}
+
+.ccf-card__front::after {
+  content: "";
+  position: absolute;
+  border: 18px solid #ff6be7;
+  border-radius: 50%;
+  width: 260px;
+  height: 260px;
+  bottom: -110px;
+  right: -60px;
+  filter: blur(14px);
+  opacity: 0.25;
+}
+
+/* Back face */
+.ccf-card__back {
+  transform: rotateY(180deg);
+  padding: 22px 0 0;
+}
+
+.ccf-card__back::before {
+  content: "";
+  position: absolute;
+  border: 18px solid #7288ff;
+  border-radius: 50%;
+  width: 280px;
+  height: 280px;
+  top: -90px;
+  right: -80px;
+  filter: blur(14px);
+  opacity: 0.3;
+}
+
+/* ── HIGHLIGHT OVERLAY ──────────────────────────────────── */
+.hl {
+  position: absolute;
+  border: 1.5px solid rgba(255,255,255,0.8);
+  border-radius: 10px;
+  z-index: 10;
+  box-shadow: 0 0 8px rgba(255,255,255,0.5);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.hl--number  { width: 348px; height: 38px; top:  88px; left: 16px; }
+.hl--holder  { width: 240px; height: 50px; top: 152px; left: 16px; }
+.hl--expire  { width:  90px; height: 50px; top: 152px; left: 280px; }
+.hl--cvv     { width: 370px; height: 88px; top:  80px; left: 14px; }
+.hl--hidden  { opacity: 0; width: 0; height: 0; }
+
+/* ── CARD HEADER ────────────────────────────────────────── */
+.ccf-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.ccf-card__brand {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.9);
+}
+
+/* ── CARD NUMBER ────────────────────────────────────────── */
+.ccf-card__number {
+  display: flex;
+  height: 32px;
+  overflow: hidden;
+  font-size: 21px;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 28px;
+  letter-spacing: 0.03em;
+}
+
+.ccf-slot {
+  display: inline-flex;
+}
+.ccf-slot--gap {
+  margin-right: 10px;
+}
+
+.ccf-digit {
+  display: flex;
+  flex-direction: column;
+  height: 32px;
+  line-height: 32px;
+  transition: transform 0.22s ease;
+}
+.ccf-digit--filed {
+  transform: translateY(-32px);
+}
+
+.ccf-digit__row {
+  height: 32px;
+  display: block;
+}
+
+/* ── CARD FOOTER ────────────────────────────────────────── */
+.ccf-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: relative;
+  z-index: 1;
+}
+
+.ccf-card__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 3px;
+}
+
+.ccf-card__holder-value,
+.ccf-card__expires-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+/* ── CARD BACK ──────────────────────────────────────────── */
+.ccf-card__stripe {
+  height: 42px;
+  width: 100%;
+  background: rgba(0,0,0,0.4);
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.ccf-card__cvv-wrap {
+  padding: 0 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: relative;
+  z-index: 1;
+}
+
+.ccf-card__cvv-field {
+  background: #fff;
+  border-radius: 8px;
+  height: 42px;
+  width: 100%;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 14px;
+  font-size: 22px;
+  letter-spacing: 0.15em;
+  margin-top: 6px;
+}
+
+/* ── FORM ───────────────────────────────────────────────── */
+.ccf-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ccf-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.ccf-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--trust-navy);
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+.ccf-input {
+  height: 48px;
+  padding: 0 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.97rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.ccf-input:focus {
+  border-color: var(--trust-navy);
+  box-shadow: 0 0 0 3px rgba(43, 58, 103, 0.1);
+}
+
+.ccf-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23777' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 14px) center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+/* Row: validade + CVV */
+.ccf-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.ccf-field--grow2 { flex: 2; }
+.ccf-field--grow1 { flex: 1; }
+
+.ccf-date-row {
+  display: flex;
+  gap: 10px;
+}
+
+.ccf-date-row .ccf-input {
+  flex: 1;
+}
+
+/* Submit button */
+.ccf-submit {
+  height: 50px;
+  border: none;
+  border-radius: 10px;
+  background: var(--trust-navy);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.2s, background-color 0.2s;
+  margin-top: 4px;
+}
+
+.ccf-submit--active {
+  opacity: 1;
+}
+
+.ccf-submit--active:hover {
+  background: var(--cta-green);
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 460px) {
+  .ccf-card__front,
+  .ccf-card__back {
+    padding: 16px 16px 18px;
+  }
+  .ccf-card__number {
+    font-size: 17px;
+  }
+  .hl--number  { width: 290px; left: 12px; }
+  .hl--holder  { width: 190px; left: 12px; }
+  .hl--expire  { width:  78px; left: 220px; }
+  .hl--cvv     { width: 310px; left: 10px; }
+}

@@ -1,0 +1,124 @@
+/* ============================================================
+   PRODUCT FAQ ACCORDION  –  ProductFAQ.css
+   Uses @radix-ui/react-accordion data-state attributes
+   ============================================================ */
+
+/* ── Root ─────────────────────────────────────────────── */
+.pfaq-root {
+  margin-top: 40px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 32px;
+}
+
+.pfaq-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--trust-navy);
+  margin-bottom: 12px;
+}
+
+/* ── Accordion list ───────────────────────────────────── */
+.pfaq-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Item ─────────────────────────────────────────────── */
+.pfaq-item {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.pfaq-item:first-child {
+  border-top: 1px solid var(--border-color);
+}
+
+/* Open item gets a subtle tint */
+.pfaq-item[data-state="open"] {
+  background-color: #f8f9ff;
+}
+
+/* ── Header (Radix wraps trigger in a header) ─────────── */
+.pfaq-header {
+  display: flex;
+}
+
+/* ── Trigger ──────────────────────────────────────────── */
+.pfaq-trigger {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+  transition: color 0.15s ease;
+}
+
+.pfaq-trigger:hover .pfaq-question {
+  color: var(--cta-orange);
+}
+
+/* ── Question text ────────────────────────────────────── */
+.pfaq-question {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--trust-navy);
+  line-height: 1.45;
+  flex: 1;
+  transition: color 0.2s ease;
+}
+
+.pfaq-trigger[data-state="open"] .pfaq-question {
+  color: var(--cta-orange);
+}
+
+/* ── Chevron icon ─────────────────────────────────────── */
+.pfaq-chevron {
+  flex-shrink: 0;
+  color: var(--text-light);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
+}
+
+.pfaq-trigger[data-state="open"] .pfaq-chevron {
+  transform: rotate(180deg);
+  color: var(--cta-orange);
+}
+
+/* ── Content panel ────────────────────────────────────── */
+.pfaq-content {
+  overflow: hidden;
+}
+
+/* Radix sets --radix-accordion-content-height for smooth animation */
+.pfaq-content[data-state="open"] {
+  animation: pfaq-slide-down 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pfaq-content[data-state="closed"] {
+  animation: pfaq-slide-up 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pfaq-slide-down {
+  from { height: 0; opacity: 0.6; }
+  to   { height: var(--radix-accordion-content-height); opacity: 1; }
+}
+
+@keyframes pfaq-slide-up {
+  from { height: var(--radix-accordion-content-height); opacity: 1; }
+  to   { height: 0; opacity: 0; }
+}
+
+/* ── Answer text ──────────────────────────────────────── */
+.pfaq-answer {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--text-dark);
+  padding: 0 4px 18px;
+  margin: 0;
+}

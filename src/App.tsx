@@ -13,6 +13,7 @@ import { AdminBanners } from './pages/admin/AdminBanners';
 import { AdminCategorias } from './pages/admin/AdminCategorias';
 import { CartProvider } from './context/CartContext';
 import { CartDrawer } from './components/CartDrawer';
+import { ChatDock } from './components/ChatDock';
 import './App.css';
 
 // Storefront layout includes Header and Footer
@@ -25,6 +26,7 @@ function StorefrontLayout() {
         <Outlet />
       </div>
       <Footer />
+      <ChatDock />
     </>
   );
 }

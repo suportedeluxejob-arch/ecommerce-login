@@ -202,3 +202,153 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* ── Modal wider for new fields ── */
+.modal-content {
+  width: 100%;
+  max-width: 620px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* ── Feature sections (badge / FAQ) ── */
+.admin-feature-section {
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-top: 8px;
+  background: var(--bg-offwhite);
+}
+
+.admin-feature-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  color: var(--trust-navy);
+}
+
+.admin-feature-header h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  flex: 1;
+  color: var(--trust-navy);
+}
+
+.admin-feature-desc {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+/* ── Toggle switch ── */
+.admin-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.admin-toggle input[type="checkbox"] {
+  display: none;
+}
+
+.admin-toggle__slider {
+  width: 38px;
+  height: 22px;
+  background: #cbd5e1;
+  border-radius: 999px;
+  position: relative;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.admin-toggle__slider::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.admin-toggle input:checked ~ .admin-toggle__slider {
+  background: var(--cta-green);
+}
+
+.admin-toggle input:checked ~ .admin-toggle__slider::after {
+  transform: translateX(16px);
+}
+
+/* ── FAQ Editor ── */
+.faq-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.faq-editor__item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.faq-editor__num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--trust-navy);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.faq-editor__fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faq-editor__fields input,
+.faq-editor__fields textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.faq-editor__fields input:focus,
+.faq-editor__fields textarea:focus {
+  border-color: var(--trust-navy);
+}
+
+.faq-add-btn {
+  align-self: flex-start;
+  font-size: 0.85rem;
+  padding: 8px 14px;
+}
