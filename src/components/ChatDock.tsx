@@ -94,7 +94,7 @@ export function ChatDock() {
   }, [activeChar, isOpen]);
 
   /* ── Bot "typing" simulation ── */
-  const botReply = useCallback((userText: string, char: Character) => {
+  const botReply = useCallback((userText: string) => {
     setTyping(true);
     const lower = userText.toLowerCase();
 
@@ -137,7 +137,7 @@ export function ChatDock() {
     const userMsg: Message = { from: 'user', text: input.trim() };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
-    botReply(userMsg.text, activeChar);
+    botReply(userMsg.text);
   }, [input, activeChar, botReply]);
 
   const handleKey = (e: React.KeyboardEvent) => {

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { ShoppingCart, ShieldCheck, Truck, Star } from 'lucide-react';
+import { ShoppingCart, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { ProductFAQ } from '../components/ProductFAQ';
 import { GiftBadge } from '../components/GiftBadge';
+import { ProductFeedback } from '../components/ProductFeedback';
 import './ProductPage.css';
 
 // Default FAQ items for every product — can be overridden per product in Firebase
@@ -32,7 +33,7 @@ const DEFAULT_FAQ = [
 export function ProductPage() {
   const { id } = useParams();
   const { addToCart, setIsCartOpen } = useCart();
-  const { region, loading: geoLoading } = useGeolocation();
+  useGeolocation();
 
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -102,6 +103,8 @@ export function ProductPage() {
           <div className="main-image-container">
             <img src={product.images[0]} alt={product.name} className="pdp-main-image" />
           </div>
+
+          <ProductFeedback productId={product.id} />
 
           <div className="pdp-bottom-description">
             <h2>Descrição do Produto</h2>

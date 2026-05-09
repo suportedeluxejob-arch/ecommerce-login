@@ -351,34 +351,83 @@
 /* ── Mobile adjustments ─────────────────────────────────── */
 @media (max-width: 480px) {
   .cd-root {
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100vw - 32px);
-    align-items: stretch;
+    bottom: 12px;
+    width: auto;
+    max-width: calc(100vw - 24px);
+    align-items: center;
+    gap: 8px;
   }
 
   .cd-dock {
-    padding: 8px 14px;
-    gap: 10px;
+    padding: 6px 10px;
+    gap: 8px;
     border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
   }
 
-  .cd-dock__label {
-    display: none;
+  .cd-char-btn {
+    padding: 2px;
+    gap: 1px;
   }
 
-  .cd-dock__chars {
-    justify-content: space-around;
-    width: 100%;
+  .cd-char-emoji {
+    font-size: 1.6rem;
+  }
+
+  .cd-char-dot {
+    bottom: 13px;
+    right: 0px;
+    width: 8px;
+    height: 8px;
+    border-width: 1.5px;
+  }
+
+  .cd-char-name {
+    font-size: 0.55rem;
+    font-weight: 600;
   }
 
   .cd-window {
-    width: 100%;
-    max-height: 60vh;
+    width: calc(100vw - 24px);
+    max-width: 320px;
+    max-height: 65vh;
+    border-radius: 18px;
+  }
+
+  .cd-header {
+    padding: 10px 14px;
+  }
+
+  .cd-header__avatar {
+    font-size: 1.5rem;
+  }
+
+  .cd-header__name {
+    font-size: 0.85rem;
   }
 
   .cd-messages {
-    max-height: 220px;
+    max-height: 240px;
+    padding: 12px;
+  }
+
+  .cd-bubble__text {
+    max-width: 200px;
+    font-size: 0.8rem;
+    padding: 8px 11px;
+  }
+
+  .cd-input-row {
+    padding: 8px 10px 10px;
+  }
+
+  .cd-input {
+    height: 36px;
+    font-size: 0.8rem;
+  }
+
+  .cd-send-btn {
+    width: 36px;
+    height: 36px;
   }
 }
