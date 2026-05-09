@@ -1,14 +1,17 @@
+/* ============================================
+   SOCIAL PROOF SECTION
+   ============================================ */
 .social-proof-section {
-  padding: 60px 5%;
+  padding: 70px 5% 80px;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 40px auto;
   background-color: white;
   border-radius: 24px;
-  margin-top: 40px;
-  margin-bottom: 40px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
 }
 
+/* ---- Trust Badges ---- */
 .security-badges {
   display: flex;
   justify-content: center;
@@ -29,8 +32,9 @@
 }
 
 .badge-text h4 {
-  font-size: 1.1rem;
-  margin-bottom: 4px;
+  font-size: 1.05rem;
+  margin-bottom: 3px;
+  color: var(--trust-navy);
 }
 
 .badge-text p {
@@ -38,48 +42,185 @@
   color: var(--text-light);
 }
 
-.text-center {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.reviews-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-}
-
-.review-card {
-  background-color: var(--bg-offwhite);
-  padding: 24px;
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-}
-
-.stars {
+/* ---- Section Header ---- */
+.sp-header {
   display: flex;
-  gap: 4px;
-  margin-bottom: 16px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 48px;
 }
 
-.review-text {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--text-dark);
-  margin-bottom: 16px;
-  font-style: italic;
-}
-
-.review-author {
+.sp-badge {
+  display: inline-block;
+  border: 1.5px solid var(--border-color);
+  color: var(--text-light);
+  font-size: 0.8rem;
   font-weight: 600;
-  color: var(--trust-navy);
-  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 999px;
+  margin-bottom: 16px;
 }
 
+.sp-title {
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  font-weight: 700;
+  color: var(--trust-navy);
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+
+.sp-subtitle {
+  font-size: 0.98rem;
+  color: var(--text-light);
+  max-width: 460px;
+}
+
+.sp-subtitle strong {
+  color: var(--trust-navy);
+}
+
+/* ---- Animated Columns ---- */
+.testimonials-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  max-height: 680px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 15%,
+    black 85%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 15%,
+    black 85%,
+    transparent 100%
+  );
+}
+
+.testimonials-column {
+  flex: 1;
+  min-width: 0;
+  max-width: 340px;
+  overflow: hidden;
+}
+
+/* Hide 2nd and 3rd columns on smaller screens */
+.testimonials-column:nth-child(2) {
+  display: none;
+}
+.testimonials-column:nth-child(3) {
+  display: none;
+}
+
+@media (min-width: 720px) {
+  .testimonials-column:nth-child(2) {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .testimonials-column:nth-child(3) {
+    display: block;
+  }
+}
+
+/* Scrolling track — duplicated items for seamless loop */
+.testimonials-track {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: scrollUp linear infinite;
+}
+
+@keyframes scrollUp {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+/* Pause on hover */
+.testimonials-wrapper:hover .testimonials-track {
+  animation-play-state: paused;
+}
+
+/* ---- Individual Card ---- */
+.testimonial-card {
+  background-color: var(--bg-offwhite);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 22px;
+  flex-shrink: 0;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.testimonial-card:hover {
+  box-shadow: 0 6px 24px rgba(43, 58, 103, 0.09);
+  transform: translateY(-2px);
+}
+
+.tc-stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 12px;
+}
+
+.tc-text {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-dark);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+.tc-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tc-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.tc-name {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--trust-navy);
+}
+
+.tc-role {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+/* ---- Responsive badges ---- */
 @media (max-width: 768px) {
   .security-badges {
-    gap: 30px;
+    gap: 28px;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .social-proof-section {
+    padding: 50px 4%;
   }
 }
