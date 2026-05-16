@@ -10,6 +10,8 @@ import { GiftBadge } from '../components/GiftBadge';
 import { ProductFeedback } from '../components/ProductFeedback';
 import './ProductPage.css';
 
+type VariantItem = { name: string; type: string; image?: string };
+
 // Default FAQ items for every product — can be overridden per product in Firebase
 const DEFAULT_FAQ = [
   {
@@ -38,6 +40,11 @@ export function ProductPage() {
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  // Selected variant per type — e.g. { Cor: "Rosa", Tamanho: "M" }
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+  // Which image to show as main (overridden by variant selection)
+  const [mainImage, setMainImage] = useState<string>('');
+
   useEffect(() => {
     async function fetchProduct() {
       if (!id) return;
@@ -45,7 +52,9 @@ export function ProductPage() {
         const docRef = doc(db, 'products', id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setProduct({ id: docSnap.id, ...docSnap.data() });
+          const data = { id: docSnap.id, ...docSnap.data() } as any;
+          setProduct(data);
+          setMainImage(data.images?.[0] || '');
         } else {
           setProduct(null);
         }
@@ -66,12 +75,40 @@ export function ProductPage() {
     return <div className="product-not-found">Produto não encontrado.</div>;
   }
 
+  // ── Variants logic ──
+  const variants: VariantItem[] = product.variants || [];
+
+  // Group variants by type: { Cor: [{name:"Rosa", image?:...}, ...], Tamanho: [...] }
+  const variantGroups = variants.reduce<Record<string, VariantItem[]>>((acc, v) => {
+    if (!acc[v.type]) acc[v.type] = [];
+    acc[v.type].push(v);
+    return acc;
+  }, {});
+
+  const variantTypes = Object.keys(variantGroups);
+  const hasVariants = variantTypes.length > 0;
+
+  const handleVariantSelect = (type: string, variantName: string, variantImage?: string) => {
+    setSelectedVariants(prev => ({ ...prev, [type]: variantName }));
+    // If this variant has its own image, switch the main image
+    if (variantImage) {
+      setMainImage(variantImage);
+    }
+  };
+
+  // Build a readable variant string for the cart, e.g. "Rosa | M"
+  const selectedVariantLabel = variantTypes
+    .map(type => selectedVariants[type])
+    .filter(Boolean)
+    .join(' | ');
+
   const handleAddToCart = () => {
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images[0],
+      image: mainImage || product.images[0],
+      variant: selectedVariantLabel || undefined,
     });
     setIsCartOpen(true);
   };
@@ -101,8 +138,24 @@ export function ProductPage() {
         {/* Left Column: Image Gallery */}
         <div className="pdp-gallery">
           <div className="main-image-container">
-            <img src={product.images[0]} alt={product.name} className="pdp-main-image" />
+            <img src={mainImage || product.images[0]} alt={product.name} className="pdp-main-image" />
           </div>
+
+          {/* Thumbnail strip — clicking a thumbnail resets to that image */}
+          {product.images && product.images.length > 1 && (
+            <div className="pdp-thumbnails">
+              {product.images.map((img: string, idx: number) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`pdp-thumb-btn ${mainImage === img ? 'active' : ''}`}
+                  onClick={() => setMainImage(img)}
+                >
+                  <img src={img} alt={`Foto ${idx + 1}`} />
+                </button>
+              ))}
+            </div>
+          )}
 
           <ProductFeedback productId={product.id} />
 
@@ -116,8 +169,6 @@ export function ProductPage() {
 
         {/* Right Column: Product Info & Conversion Sidebar */}
         <div className="pdp-info">
-
-
           <div className="pdp-rating">
             <div className="stars">
               <Star size={18} fill="var(--cta-orange)" color="var(--cta-orange)" />
@@ -160,14 +211,49 @@ export function ProductPage() {
 
           {showGiftBadge && <GiftBadge />}
 
+          {/* ── Variants Selector ── */}
+          {hasVariants && (
+            <div className="pdp-variants">
+              {variantTypes.map(type => (
+                <div key={type} className="pdp-variant-group">
+                  <div className="pdp-variant-label">
+                    <span className="pdp-variant-type">{type}:</span>
+                    {selectedVariants[type] && (
+                      <span className="pdp-variant-selected">{selectedVariants[type]}</span>
+                    )}
+                  </div>
+                  <div className="pdp-variant-options">
+                    {variantGroups[type].map((v) => {
+                      const isSelected = selectedVariants[type] === v.name;
+                      return (
+                        <button
+                          key={v.name}
+                          type="button"
+                          className={`pdp-variant-btn ${isSelected ? 'selected' : ''} ${v.image ? 'has-image' : ''}`}
+                          onClick={() => handleVariantSelect(type, v.name, v.image)}
+                          title={v.name}
+                        >
+                          {v.image ? (
+                            <img src={v.image} alt={v.name} className="pdp-variant-img" />
+                          ) : (
+                            v.name
+                          )}
+                          {v.image && <span className="pdp-variant-img-label">{v.name}</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           <img src="/trust-banner.png" alt="Compra Garantida - Entrega Rápida" className="pdp-ml-trust-banner" />
 
           <button className="pdp-buy-btn" onClick={handleAddToCart}>
             <ShoppingCart size={22} />
             Comprar Agora
           </button>
-
-
 
           {/* ── FAQ Accordion (effeito01) ── */}
           <ProductFAQ items={faqItems} />

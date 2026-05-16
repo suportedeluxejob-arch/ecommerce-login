@@ -6,6 +6,7 @@ export interface CartItem {
   price: number;
   image: string;
   quantity: number;
+  variant?: string; // ex: "Rosa | G"
 }
 
 interface CartContextType {
@@ -28,11 +29,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = (newItem: Omit<CartItem, 'quantity'>) => {
     setItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === newItem.id);
+      const cartKey = newItem.id + (newItem.variant ? `__${newItem.variant}` : '');
+      const existingItem = prevItems.find(
+        (item) => item.id + (item.variant ? `__${item.variant}` : '') === cartKey
+      );
       if (existingItem) {
-        return prevItems.map((item) =>
-          item.id === newItem.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
+        return prevItems.map((item) => {
+          const key = item.id + (item.variant ? `__${item.variant}` : '');
+          return key === cartKey ? { ...item, quantity: item.quantity + 1 } : item;
+        });
       }
       return [...prevItems, { ...newItem, quantity: 1 }];
     });

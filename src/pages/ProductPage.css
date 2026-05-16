@@ -246,3 +246,152 @@
   line-height: 1.7;
   color: var(--text-dark);
 }
+
+/* ── Thumbnail strip ── */
+.pdp-thumbnails {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.pdp-thumb-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.pdp-thumb-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pdp-thumb-btn:hover {
+  border-color: #94a3b8;
+  transform: scale(1.05);
+}
+
+.pdp-thumb-btn.active {
+  border-color: var(--trust-navy);
+  box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2);
+}
+
+/* ── Variants Selector ── */
+.pdp-variants {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+}
+
+.pdp-variant-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pdp-variant-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pdp-variant-type {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--trust-navy);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pdp-variant-selected {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.pdp-variant-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Text-only variant button */
+.pdp-variant-btn {
+  padding: 7px 18px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pdp-variant-btn:hover {
+  border-color: var(--trust-navy);
+  background: #eff6ff;
+}
+
+.pdp-variant-btn.selected {
+  border-color: var(--trust-navy);
+  background: var(--trust-navy);
+  color: #fff;
+  transform: scale(1.04);
+}
+
+/* Image-style variant button */
+.pdp-variant-btn.has-image {
+  padding: 4px;
+  width: 58px;
+  height: 58px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.pdp-variant-btn.has-image.selected {
+  border-color: var(--cta-orange);
+  box-shadow: 0 0 0 3px rgba(255, 102, 51, 0.3);
+  transform: scale(1.06);
+}
+
+.pdp-variant-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+.pdp-variant-img-label {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .pdp-thumbnails {
+    justify-content: center;
+  }
+
+  .pdp-variants {
+    padding: 12px;
+  }
+}
+

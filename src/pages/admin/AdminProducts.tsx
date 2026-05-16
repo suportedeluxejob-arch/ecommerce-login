@@ -3,10 +3,13 @@ import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../firebaseConfig';
 import { mockProducts } from '../../data/mockProducts'; // For seeding
-import { Plus, Edit, Trash2, Upload, X, HelpCircle, Tag } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, X, HelpCircle, Tag, Layers } from 'lucide-react';
 import './AdminProducts.css';
 
 type FAQItem = { question: string; answer: string };
+type VariantItem = { name: string; type: string; image?: string };
+
+const VARIANT_TYPES = ['Cor', 'Tamanho', 'Modelo', 'Material', 'Outro'];
 
 export function AdminProducts() {
   const [products, setProducts] = useState<any[]>([]);
@@ -24,6 +27,7 @@ export function AdminProducts() {
   const [tags, setTags] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState('');
   const [saving, setSaving] = useState(false);
 
   // Promo Badge (effeito02)
@@ -40,7 +44,10 @@ export function AdminProducts() {
     { question: 'Posso trocar ou devolver o produto?', answer: 'Sim! Você tem 7 dias corridos após o recebimento para solicitar troca ou devolução, sem custo adicional.' },
     { question: 'O produto é fiel às fotos?', answer: 'Sim! Todas as fotos são do produto real, sem filtros. Você receberá exatamente o que está vendo.' },
   ]);
-  
+
+  // Variants
+  const [variants, setVariants] = useState<VariantItem[]>([]);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -85,28 +92,54 @@ export function AdminProducts() {
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    
-    setUploading(true);
-    const newImages = [...images];
-    
-    for (let i = 0; i < e.target.files.length; i++) {
-      const file = e.target.files[i];
-      const fileRef = ref(storage, `products/${Date.now()}_${file.name}`);
-      try {
-        await uploadBytes(fileRef, file);
-        const url = await getDownloadURL(fileRef);
-        newImages.push(url);
-      } catch (error) {
-        console.error("Erro no upload da imagem:", error);
-        alert("Falha ao subir a imagem " + file.name);
-      }
-    }
-    
-    setImages(newImages);
-    setUploading(false);
-    
+
+    // Convert FileList to Array immediately to avoid async reference issues
+    const files = Array.from(e.target.files);
+
+    // Reset input right away so the user can pick the same file again later
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+
+    setUploading(true);
+    const newImages = [...images];
+    let successCount = 0;
+    const errors: string[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      setUploadProgress(`Enviando ${i + 1} de ${files.length}: ${file.name}`);
+      const fileRef = ref(storage, `products/${Date.now()}_${file.name}`);
+      try {
+        const snapshot = await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(snapshot.ref);
+        newImages.push(url);
+        successCount++;
+      } catch (error: any) {
+        console.error("Erro no upload:", error);
+        // Provide a human-readable error message
+        let msg = file.name;
+        if (error?.code === 'storage/unauthorized') {
+          msg += ' — sem permissão no Firebase Storage (verifique as regras de segurança)';
+        } else if (error?.code === 'storage/canceled') {
+          msg += ' — upload cancelado';
+        } else if (error?.code === 'storage/unknown') {
+          msg += ' — erro desconhecido. Verifique a conexão.';
+        } else {
+          msg += ` — ${error?.message || 'erro ao enviar'}`;
+        }
+        errors.push(msg);
+      }
+    }
+
+    setImages(newImages);
+    setUploading(false);
+    setUploadProgress('');
+
+    if (errors.length > 0) {
+      alert(
+        `${successCount} imagem(ns) enviada(s) com sucesso.\n\nErros:\n• ${errors.join('\n• ')}`
+      );
     }
   };
 
@@ -139,6 +172,7 @@ export function AdminProducts() {
         promoBadge: { enabled: promoBadgeEnabled, text: promoBadgeText.trim() },
         giftBadge: { enabled: giftBadgeEnabled },
         faqItems: faqItems.filter(f => f.question.trim() && f.answer.trim()),
+        variants: variants.filter(v => v.name.trim() && v.type.trim()),
       };
 
       if (editingId) {
@@ -148,7 +182,7 @@ export function AdminProducts() {
         await addDoc(collection(db, 'products'), productData);
         alert("Produto cadastrado com sucesso!");
       }
-      
+
       setShowModal(false);
       fetchProducts();
       resetForm();
@@ -170,17 +204,30 @@ export function AdminProducts() {
   const updateFAQItem = (idx: number, field: 'question' | 'answer', value: string) =>
     setFaqItems(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item));
 
+  // ── Variant helpers ──
+  const addVariant = () =>
+    setVariants(prev => [...prev, { name: '', type: 'Cor', image: '' }]);
+
+  const removeVariant = (idx: number) =>
+    setVariants(prev => prev.filter((_, i) => i !== idx));
+
+  const updateVariant = (idx: number, field: keyof VariantItem, value: string) =>
+    setVariants(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item));
+
+  const DEFAULT_FAQ: FAQItem[] = [
+    { question: 'Este produto é seguro para bebês e crianças pequenas?', answer: 'Sim! Todos os nossos produtos possuem certificação do Inmetro e são fabricados com materiais atóxicos e livres de BPA.' },
+    { question: 'Qual é o prazo de entrega?', answer: 'Em capitais: 3 a 5 dias úteis. Demais localidades: 5 a 10 dias úteis após confirmação do pagamento.' },
+    { question: 'Posso trocar ou devolver o produto?', answer: 'Sim! Você tem 7 dias corridos após o recebimento para solicitar troca ou devolução, sem custo adicional.' },
+    { question: 'O produto é fiel às fotos?', answer: 'Sim! Todas as fotos são do produto real, sem filtros. Você receberá exatamente o que está vendo.' },
+  ];
+
   const resetForm = () => {
     setEditingId(null);
     setName(''); setPrice(''); setOriginalPrice(''); setStock(''); setDescription(''); setImages([]); setTags('');
     setPromoBadgeEnabled(false); setPromoBadgeText('');
     setGiftBadgeEnabled(false);
-    setFaqItems([
-      { question: 'Este produto é seguro para bebês e crianças pequenas?', answer: 'Sim! Todos os nossos produtos possuem certificação do Inmetro e são fabricados com materiais atóxicos e livres de BPA.' },
-      { question: 'Qual é o prazo de entrega?', answer: 'Em capitais: 3 a 5 dias úteis. Demais localidades: 5 a 10 dias úteis após confirmação do pagamento.' },
-      { question: 'Posso trocar ou devolver o produto?', answer: 'Sim! Você tem 7 dias corridos após o recebimento para solicitar troca ou devolução, sem custo adicional.' },
-      { question: 'O produto é fiel às fotos?', answer: 'Sim! Todas as fotos são do produto real, sem filtros. Você receberá exatamente o que está vendo.' },
-    ]);
+    setFaqItems(DEFAULT_FAQ);
+    setVariants([]);
   };
 
   const handleNewClick = () => {
@@ -200,12 +247,8 @@ export function AdminProducts() {
     setPromoBadgeEnabled(product.promoBadge?.enabled || false);
     setPromoBadgeText(product.promoBadge?.text || '');
     setGiftBadgeEnabled(product.giftBadge?.enabled || false);
-    setFaqItems(product.faqItems && product.faqItems.length > 0 ? product.faqItems : [
-      { question: 'Este produto é seguro para bebês e crianças pequenas?', answer: 'Sim! Todos os nossos produtos possuem certificação do Inmetro e são fabricados com materiais atóxicos e livres de BPA.' },
-      { question: 'Qual é o prazo de entrega?', answer: 'Em capitais: 3 a 5 dias úteis. Demais localidades: 5 a 10 dias úteis após confirmação do pagamento.' },
-      { question: 'Posso trocar ou devolver o produto?', answer: 'Sim! Você tem 7 dias corridos após o recebimento para solicitar troca ou devolução, sem custo adicional.' },
-      { question: 'O produto é fiel às fotos?', answer: 'Sim! Todas as fotos são do produto real, sem filtros. Você receberá exatamente o que está vendo.' },
-    ]);
+    setFaqItems(product.faqItems && product.faqItems.length > 0 ? product.faqItems : DEFAULT_FAQ);
+    setVariants(product.variants && product.variants.length > 0 ? product.variants : []);
     setShowModal(true);
   };
 
@@ -248,6 +291,7 @@ export function AdminProducts() {
                 <th>Nome</th>
                 <th>Preço</th>
                 <th>Estoque</th>
+                <th>Variantes</th>
                 <th>Status</th>
                 <th>Ações</th>
               </tr>
@@ -255,8 +299,8 @@ export function AdminProducts() {
             <tbody>
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="empty-state">
-                    Nenhum produto cadastrado no banco de dados. 
+                  <td colSpan={7} className="empty-state">
+                    Nenhum produto cadastrado no banco de dados.
                     Clique em "Adicionar Dados de Teste" para popular.
                   </td>
                 </tr>
@@ -269,6 +313,13 @@ export function AdminProducts() {
                     <td>{p.name}</td>
                     <td>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(p.price)}</td>
                     <td>{p.stock} un.</td>
+                    <td>
+                      {p.variants && p.variants.length > 0 ? (
+                        <span className="variant-count-badge">{p.variants.length} variante{p.variants.length > 1 ? 's' : ''}</span>
+                      ) : (
+                        <span className="no-variants">—</span>
+                      )}
+                    </td>
                     <td>
                       <span className={`status-badge ${p.isActive ? 'shipped' : 'pending'}`}>
                         {p.isActive ? 'Ativo' : 'Inativo'}
@@ -309,12 +360,12 @@ export function AdminProducts() {
                 </div>
                 <div className="form-group">
                   <label>Preço "De:" (riscado) <span className="optional-tag">opcional</span></label>
-                  <input 
-                    type="number" 
-                    step="0.01" 
+                  <input
+                    type="number"
+                    step="0.01"
                     placeholder="Ex: 199,90"
-                    value={originalPrice} 
-                    onChange={(e) => setOriginalPrice(e.target.value)} 
+                    value={originalPrice}
+                    onChange={(e) => setOriginalPrice(e.target.value)}
                   />
                   <span className="input-hint">Deixe em branco se não houver promoção ativa.</span>
                 </div>
@@ -324,9 +375,10 @@ export function AdminProducts() {
                 </div>
               </div>
 
+              {/* ── IMAGE UPLOAD ── */}
               <div className="form-group">
                 <label>Imagens do Produto</label>
-                
+
                 <div className="images-preview-container">
                   {images.map((img, idx) => (
                     <div key={idx} className="image-preview">
@@ -336,21 +388,34 @@ export function AdminProducts() {
                       </button>
                     </div>
                   ))}
-                  
+
                   <div className="upload-btn-wrapper">
-                    <button type="button" className="admin-btn upload-trigger" disabled={uploading} onClick={() => fileInputRef.current?.click()}>
-                      {uploading ? 'Enviando...' : <><Upload size={20} /> Adicionar Foto</>}
+                    <button
+                      type="button"
+                      className="admin-btn upload-trigger"
+                      disabled={uploading}
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {uploading ? (
+                        <span className="upload-progress-text">
+                          <span className="upload-spinner" />
+                          {uploadProgress || 'Enviando...'}
+                        </span>
+                      ) : (
+                        <><Upload size={20} /> Adicionar Foto</>
+                      )}
                     </button>
-                    <input 
-                      type="file" 
+                    <input
+                      type="file"
                       ref={fileInputRef}
-                      onChange={handleImageUpload} 
-                      accept="image/*" 
-                      multiple 
+                      onChange={handleImageUpload}
+                      accept="image/*"
+                      multiple
                       style={{ display: 'none' }}
                     />
                   </div>
                 </div>
+                <span className="input-hint">Clique para selecionar uma ou várias imagens ao mesmo tempo.</span>
               </div>
 
               <div className="form-group">
@@ -361,6 +426,68 @@ export function AdminProducts() {
               <div className="form-group">
                 <label>Descrição</label>
                 <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} required />
+              </div>
+
+              {/* ── VARIANTS (Variantes) ── */}
+              <div className="admin-feature-section">
+                <div className="admin-feature-header">
+                  <Layers size={18} />
+                  <h4>Variantes do Produto</h4>
+                </div>
+                <p className="admin-feature-desc">
+                  Use variantes para produtos disponíveis em cores, tamanhos ou modelos diferentes. O cliente poderá selecionar antes de comprar.
+                </p>
+
+                {variants.length > 0 && (
+                  <div className="variants-editor">
+                    {/* Group header */}
+                    <div className="variants-editor__header">
+                      <span>Tipo</span>
+                      <span>Nome da variante</span>
+                      <span>Imagem (URL) <em className="optional-tag">opcional</em></span>
+                      <span />
+                    </div>
+                    {variants.map((v, idx) => (
+                      <div key={idx} className="variants-editor__row">
+                        <select
+                          value={v.type}
+                          onChange={(e) => updateVariant(idx, 'type', e.target.value)}
+                          className="variant-type-select"
+                        >
+                          {VARIANT_TYPES.map(t => (
+                            <option key={t} value={t}>{t}</option>
+                          ))}
+                        </select>
+                        <input
+                          type="text"
+                          placeholder="Ex: Rosa, Azul, P, M, G..."
+                          value={v.name}
+                          onChange={(e) => updateVariant(idx, 'name', e.target.value)}
+                          className="variant-name-input"
+                        />
+                        <input
+                          type="text"
+                          placeholder="https://..."
+                          value={v.image || ''}
+                          onChange={(e) => updateVariant(idx, 'image', e.target.value)}
+                          className="variant-img-input"
+                        />
+                        <button
+                          type="button"
+                          className="action-icon delete"
+                          onClick={() => removeVariant(idx)}
+                          title="Remover variante"
+                        >
+                          <X size={15} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <button type="button" className="admin-btn secondary faq-add-btn" style={{ marginTop: 12 }} onClick={addVariant}>
+                  <Plus size={16} /> Adicionar Variante
+                </button>
               </div>
 
               {/* ── PROMO BADGE (effeito02) ── */}
