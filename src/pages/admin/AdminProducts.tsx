@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../firebaseConfig';
+import { db } from '../../firebaseConfig';
 import { mockProducts } from '../../data/mockProducts'; // For seeding
-import { Plus, Edit, Trash2, Upload, X, HelpCircle, Tag, Layers } from 'lucide-react';
+import { Plus, Edit, Trash2, X, HelpCircle, Tag, Layers } from 'lucide-react';
 import './AdminProducts.css';
 
 type FAQItem = { question: string; answer: string };
@@ -22,12 +21,11 @@ export function AdminProducts() {
   const [stock, setStock] = useState('');
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [imageUrlInput, setImageUrlInput] = useState('');
   const [originalPrice, setOriginalPrice] = useState('');
   const [category] = useState('geral');
   const [tags, setTags] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState('');
   const [saving, setSaving] = useState(false);
 
   // Promo Badge (effeito02)
@@ -48,7 +46,7 @@ export function AdminProducts() {
   // Variants
   const [variants, setVariants] = useState<VariantItem[]>([]);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
 
   useEffect(() => {
     fetchProducts();
@@ -90,57 +88,17 @@ export function AdminProducts() {
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
+  const handleAddImageUrl = () => {
+    const url = imageUrlInput.trim();
+    if (!url) return;
 
-    // Convert FileList to Array immediately to avoid async reference issues
-    const files = Array.from(e.target.files);
-
-    // Reset input right away so the user can pick the same file again later
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      alert("Por favor, insira uma URL válida iniciando com http:// ou https://");
+      return;
     }
 
-    setUploading(true);
-    const newImages = [...images];
-    let successCount = 0;
-    const errors: string[] = [];
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      setUploadProgress(`Enviando ${i + 1} de ${files.length}: ${file.name}`);
-      const fileRef = ref(storage, `products/${Date.now()}_${file.name}`);
-      try {
-        const snapshot = await uploadBytes(fileRef, file);
-        const url = await getDownloadURL(snapshot.ref);
-        newImages.push(url);
-        successCount++;
-      } catch (error: any) {
-        console.error("Erro no upload:", error);
-        // Provide a human-readable error message
-        let msg = file.name;
-        if (error?.code === 'storage/unauthorized') {
-          msg += ' — sem permissão no Firebase Storage (verifique as regras de segurança)';
-        } else if (error?.code === 'storage/canceled') {
-          msg += ' — upload cancelado';
-        } else if (error?.code === 'storage/unknown') {
-          msg += ' — erro desconhecido. Verifique a conexão.';
-        } else {
-          msg += ` — ${error?.message || 'erro ao enviar'}`;
-        }
-        errors.push(msg);
-      }
-    }
-
-    setImages(newImages);
-    setUploading(false);
-    setUploadProgress('');
-
-    if (errors.length > 0) {
-      alert(
-        `${successCount} imagem(ns) enviada(s) com sucesso.\n\nErros:\n• ${errors.join('\n• ')}`
-      );
-    }
+    setImages(prev => [...prev, url]);
+    setImageUrlInput('');
   };
 
   const removeImage = (index: number) => {
@@ -224,6 +182,7 @@ export function AdminProducts() {
   const resetForm = () => {
     setEditingId(null);
     setName(''); setPrice(''); setOriginalPrice(''); setStock(''); setDescription(''); setImages([]); setTags('');
+    setImageUrlInput('');
     setPromoBadgeEnabled(false); setPromoBadgeText('');
     setGiftBadgeEnabled(false);
     setFaqItems(DEFAULT_FAQ);
@@ -375,47 +334,51 @@ export function AdminProducts() {
                 </div>
               </div>
 
-              {/* ── IMAGE UPLOAD ── */}
+              {/* ── IMAGE URLS ── */}
               <div className="form-group">
                 <label>Imagens do Produto</label>
 
-                <div className="images-preview-container">
-                  {images.map((img, idx) => (
-                    <div key={idx} className="image-preview">
-                      <img src={img} alt={`Preview ${idx}`} />
-                      <button type="button" className="remove-img-btn" onClick={() => removeImage(idx)}>
-                        <X size={14} />
-                      </button>
-                    </div>
-                  ))}
-
-                  <div className="upload-btn-wrapper">
-                    <button
-                      type="button"
-                      className="admin-btn upload-trigger"
-                      disabled={uploading}
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      {uploading ? (
-                        <span className="upload-progress-text">
-                          <span className="upload-spinner" />
-                          {uploadProgress || 'Enviando...'}
-                        </span>
-                      ) : (
-                        <><Upload size={20} /> Adicionar Foto</>
-                      )}
-                    </button>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleImageUpload}
-                      accept="image/*"
-                      multiple
-                      style={{ display: 'none' }}
-                    />
-                  </div>
+                <div className="image-url-input-group">
+                  <input
+                    type="url"
+                    placeholder="Insira a URL da imagem (ex: https://...)"
+                    value={imageUrlInput}
+                    onChange={(e) => setImageUrlInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddImageUrl();
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="admin-btn primary add-image-url-btn"
+                    onClick={handleAddImageUrl}
+                  >
+                    <Plus size={16} /> Adicionar
+                  </button>
                 </div>
-                <span className="input-hint">Clique para selecionar uma ou várias imagens ao mesmo tempo.</span>
+
+                {images.length > 0 && (
+                  <div className="images-preview-container">
+                    {images.map((img, idx) => (
+                      <div key={idx} className="image-preview">
+                        <img 
+                          src={img} 
+                          alt={`Preview ${idx}`} 
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80?text=Erro+Link';
+                          }} 
+                        />
+                        <button type="button" className="remove-img-btn" onClick={() => removeImage(idx)}>
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <span className="input-hint">Cole o link da imagem que já está hospedada e clique em "Adicionar". Adicione quantas imagens quiser.</span>
               </div>
 
               <div className="form-group">
@@ -587,7 +550,7 @@ export function AdminProducts() {
 
               <div className="modal-actions">
                 <button type="button" className="admin-btn secondary" onClick={() => {setShowModal(false); resetForm();}} disabled={saving}>Cancelar</button>
-                <button type="submit" className="admin-btn primary" disabled={saving || uploading}>
+                <button type="submit" className="admin-btn primary" disabled={saving}>
                   {saving ? 'Salvando...' : 'Salvar Produto'}
                 </button>
               </div>

@@ -456,3 +456,37 @@
   background: #fff;
 }
 
+/* ── Image URL Input Group ── */
+.image-url-input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.image-url-input-group input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  background-color: #f8fafc;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.image-url-input-group input:focus {
+  border-color: var(--trust-navy);
+  background-color: #fff;
+}
+
+.add-image-url-btn {
+  white-space: nowrap;
+  height: auto;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
