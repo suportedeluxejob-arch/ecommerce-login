@@ -23,7 +23,9 @@ export function AdminProducts() {
   const [images, setImages] = useState<string[]>([]);
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [originalPrice, setOriginalPrice] = useState('');
-  const [category] = useState('geral');
+  const [costPrice, setCostPrice] = useState<string | number>('');
+  const [categories, setCategories] = useState<any[]>([]);
+  const [category, setCategory] = useState('geral');
   const [tags, setTags] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -50,7 +52,21 @@ export function AdminProducts() {
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'categories'));
+      const cats: any[] = [];
+      querySnapshot.forEach((doc) => {
+        cats.push({ id: doc.id, ...doc.data() });
+      });
+      setCategories(cats);
+    } catch (error) {
+      console.error("Erro ao buscar categorias:", error);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -118,10 +134,11 @@ export function AdminProducts() {
     try {
       const productData = {
         name,
-        slug: name.toLowerCase().replace(/ /g, '-'),
+        slug: name.toLowerCase().replace(/ /g, '-').normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
         description,
         price: parseFloat(price.toString()),
         originalPrice: originalPrice ? parseFloat(originalPrice.toString()) : null,
+        costPrice: costPrice ? parseFloat(costPrice.toString()) : 0,
         stock: parseInt(stock.toString()),
         category,
         images: images,
@@ -181,8 +198,9 @@ export function AdminProducts() {
 
   const resetForm = () => {
     setEditingId(null);
-    setName(''); setPrice(''); setOriginalPrice(''); setStock(''); setDescription(''); setImages([]); setTags('');
+    setName(''); setPrice(''); setOriginalPrice(''); setCostPrice(''); setStock(''); setDescription(''); setImages([]); setTags('');
     setImageUrlInput('');
+    setCategory('geral');
     setPromoBadgeEnabled(false); setPromoBadgeText('');
     setGiftBadgeEnabled(false);
     setFaqItems(DEFAULT_FAQ);
@@ -199,10 +217,12 @@ export function AdminProducts() {
     setName(product.name);
     setPrice(product.price);
     setOriginalPrice(product.originalPrice || '');
+    setCostPrice(product.costPrice || '');
     setStock(product.stock);
     setDescription(product.description || '');
     setImages(product.images || []);
     setTags(product.tags ? product.tags.join(', ') : '');
+    setCategory(product.category || 'geral');
     setPromoBadgeEnabled(product.promoBadge?.enabled || false);
     setPromoBadgeText(product.promoBadge?.text || '');
     setGiftBadgeEnabled(product.giftBadge?.enabled || false);
@@ -307,15 +327,30 @@ export function AdminProducts() {
           <div className="modal-content admin-card">
             <h2>{editingId ? 'Editar Produto' : 'Novo Produto'}</h2>
             <form onSubmit={handleSaveProduct} className="admin-form">
-              <div className="form-group">
-                <label>Nome do Produto</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+              <div className="form-row">
+                <div className="form-group flex-2">
+                  <label>Nome do Produto <span className="required">*</span></label>
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+                </div>
+                <div className="form-group flex-1">
+                  <label>Categoria <span className="required">*</span></label>
+                  <select value={category} onChange={(e) => setCategory(e.target.value)} required className="form-select">
+                    <option value="geral">Geral (Padrão)</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.slug}>{cat.label}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              <div className="form-row">
+              <div className="form-row price-stock-row">
                 <div className="form-group">
-                  <label>Preço Atual (R$) <span className="required">*</span></label>
+                  <label>Preço de Venda (R$) <span className="required">*</span></label>
                   <input type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required />
+                </div>
+                <div className="form-group">
+                  <label>Preço de Custo (R$) <span className="optional-tag">custo</span></label>
+                  <input type="number" step="0.01" placeholder="Ex: 45,00" value={costPrice} onChange={(e) => setCostPrice(e.target.value)} />
                 </div>
                 <div className="form-group">
                   <label>Preço "De:" (riscado) <span className="optional-tag">opcional</span></label>
@@ -326,7 +361,6 @@ export function AdminProducts() {
                     value={originalPrice}
                     onChange={(e) => setOriginalPrice(e.target.value)}
                   />
-                  <span className="input-hint">Deixe em branco se não houver promoção ativa.</span>
                 </div>
                 <div className="form-group">
                   <label>Estoque</label>

@@ -1,37 +1,67 @@
+/* variables & modern colors inherited from index.css or overridden here */
+:root {
+  --sidebar-dark: #0B0F19;
+  --sidebar-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-active: linear-gradient(135deg, #FF6B35, #E84A1C);
+  --bg-slate-light: #F8FAFC;
+  --text-slate-dark: #1E293B;
+  --text-slate-muted: #64748B;
+  --border-slate: #E2E8F0;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 20px rgba(255, 107, 53, 0.15);
+}
+
 .admin-layout {
   display: flex;
   height: 100vh;
-  background-color: #f1f5f9;
+  background-color: var(--bg-slate-light);
+  font-family: 'Inter', sans-serif;
 }
 
+/* Sidebar Styling - Highly Premium */
 .admin-sidebar {
-  width: 260px;
-  background-color: #0f172a;
+  width: 270px;
+  background-color: var(--sidebar-dark);
   color: white;
   display: flex;
   flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  z-index: 10;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-logo-container {
-  padding: 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 32px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .admin-logo {
   font-family: 'Poppins', sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.45rem;
+  font-weight: 700;
   margin: 0;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .logo-highlight {
-  color: var(--cta-orange);
+  background: var(--sidebar-active);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
 }
 
 .admin-nav {
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
 }
 
@@ -40,38 +70,57 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border-radius: 8px;
-  color: #cbd5e1;
+  border-radius: 10px;
+  color: #94A3B8;
   text-decoration: none;
-  font-weight: 500;
-  transition: all 0.2s;
+  font-weight: 550;
+  font-size: 0.92rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.admin-nav-item svg {
+  transition: transform 0.2s ease;
 }
 
 .admin-nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: white;
+  background-color: var(--sidebar-hover);
+  color: #F8FAFC;
+  transform: translateX(4px);
+}
+
+.admin-nav-item:hover svg {
+  transform: scale(1.1);
 }
 
 .admin-nav-item.active {
-  background-color: var(--cta-orange);
+  background: var(--sidebar-active);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(255, 107, 53, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-nav-item.active svg {
   color: white;
 }
 
 .admin-sidebar-footer {
-  padding: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .return-store {
-  color: #94a3b8;
+  color: #64748B;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .return-store:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: white;
+  background-color: rgba(255, 255, 255, 0.02);
+  color: #F8FAFC;
 }
 
 .logout-btn {
@@ -80,51 +129,60 @@
   border: none;
   cursor: pointer;
   text-align: left;
-  color: #ef4444;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
+  color: #EF4444;
+  font-weight: 550;
+  font-size: 0.92rem;
 }
 
 .logout-btn:hover {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.08);
+  color: #F87171;
 }
 
-
+/* Main Area Layout */
 .admin-main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 
+/* Topbar glass effect */
 .admin-topbar {
-  background-color: white;
-  height: 70px;
-  padding: 0 32px;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  height: 75px;
+  padding: 0 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-slate);
 }
 
 .admin-topbar h2 {
-  font-size: 1.25rem;
-  color: var(--trust-navy);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-slate-dark);
   margin: 0;
+  letter-spacing: -0.3px;
 }
 
 .admin-user-info {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background-color: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .admin-avatar {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #f97316, #ea580c);
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #3B82F6, #1D4ED8);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -133,54 +191,108 @@
   font-weight: 700;
   font-size: 0.85rem;
   flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
+  border: 2px solid white;
 }
 
 .admin-user-details {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .admin-user-label {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  color: var(--trust-navy);
+  color: var(--text-slate-dark);
   line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .admin-user-email {
   font-size: 0.75rem;
-  color: var(--text-light);
+  color: var(--text-slate-muted);
   font-weight: 400;
   line-height: 1;
-  max-width: 180px;
+  max-width: 170px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-
 .admin-content-wrapper {
-  padding: 32px;
+  padding: 40px;
   overflow-y: auto;
   flex: 1;
+  scroll-behavior: smooth;
 }
 
-/* Common Admin Styles */
+/* Beautiful custom scrollbar for dashboard */
+.admin-content-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-content-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-content-wrapper::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 10px;
+}
+
+.admin-content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Common premium Admin Card design */
 .admin-card {
   background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border-radius: 18px;
+  padding: 28px;
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  box-shadow: var(--shadow-md);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(203, 213, 225, 0.8);
 }
 
 .admin-title {
-  font-size: 1.5rem;
-  margin-bottom: 24px;
-  color: var(--trust-navy);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--text-slate-dark);
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
 }
 
-/* ===== MOBILE ADMIN ===== */
+.admin-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-slate-muted);
+  margin-top: 0;
+  margin-bottom: 28px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Mobile responsive styles */
 @media (max-width: 768px) {
   .admin-layout {
     flex-direction: column;
@@ -195,52 +307,48 @@
   }
 
   .admin-logo-container {
-    padding: 16px;
-  }
-
-  .admin-logo {
-    font-size: 1.25rem;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
   }
 
   .admin-nav {
     flex-direction: row;
     flex-wrap: wrap;
-    padding: 12px;
+    padding: 8px;
     gap: 4px;
   }
 
   .admin-nav-item {
     flex: 1;
-    min-width: 100px;
+    min-width: 90px;
     justify-content: center;
-    font-size: 0.8rem;
-    padding: 10px 8px;
-    gap: 6px;
-    text-align: center;
+    font-size: 0.75rem;
+    padding: 8px 4px;
+    gap: 4px;
     flex-direction: column;
+    text-align: center;
+  }
+
+  .admin-nav-item:hover {
+    transform: none;
   }
 
   .admin-sidebar-footer {
-    display: none; /* Hide "Voltar à Loja" in mobile nav, too cluttered */
+    display: none;
   }
 
   .admin-topbar {
-    padding: 0 16px;
-    height: 56px;
+    padding: 0 20px;
+    height: 60px;
   }
 
   .admin-content-wrapper {
-    padding: 16px;
+    padding: 20px;
   }
 
   .admin-card {
-    padding: 16px;
-  }
-
-  .admin-table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    padding: 20px;
   }
 }
-
