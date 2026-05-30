@@ -17,10 +17,7 @@ export function AdminBanners() {
   const [activeFrom, setActiveFrom] = useState('');
   const [activeUntil, setActiveUntil] = useState('');
   const [editingBannerId, setEditingBannerId] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchBanners();
@@ -42,24 +39,7 @@ export function AdminBanners() {
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    
-    const file = e.target.files[0];
-    setUploading(true);
-    
-    const fileRef = ref(storage, `banners/${Date.now()}_${file.name}`);
-    try {
-      await uploadBytes(fileRef, file);
-      const url = await getDownloadURL(fileRef);
-      setImageUrl(url);
-    } catch (error) {
-      console.error("Erro no upload do banner:", error);
-      alert("Falha ao subir a imagem.");
-    } finally {
-      setUploading(false);
-    }
-  };
+
 
   const handleSaveBanner = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -210,29 +190,18 @@ export function AdminBanners() {
             <h2>{editingBannerId ? 'Editar Banner' : 'Cadastrar Novo Banner'}</h2>
             <form onSubmit={handleSaveBanner} className="admin-form">
               <div className="form-group">
-                <label>Imagem do Banner</label>
+                <label>URL da Imagem do Banner</label>
+                <input 
+                  type="url" 
+                  placeholder="https://exemplo.com/imagem.png" 
+                  value={imageUrl} 
+                  onChange={(e) => setImageUrl(e.target.value)} 
+                  required 
+                />
                 
                 {imageUrl && (
-                  <div className="banner-preview-box">
+                  <div className="banner-preview-box mt-3">
                     <img src={imageUrl} alt="Preview" />
-                    <button type="button" className="admin-btn secondary small" onClick={() => setImageUrl('')}>
-                      Remover Imagem
-                    </button>
-                  </div>
-                )}
-                
-                {!imageUrl && (
-                  <div className="upload-banner-wrapper">
-                    <button type="button" className="admin-btn upload-trigger" disabled={uploading} onClick={() => fileInputRef.current?.click()}>
-                      {uploading ? 'Enviando...' : <><Upload size={20} /> Selecionar Imagem</>}
-                    </button>
-                    <input 
-                      type="file" 
-                      ref={fileInputRef}
-                      onChange={handleImageUpload} 
-                      accept="image/*" 
-                      style={{ display: 'none' }}
-                    />
                   </div>
                 )}
               </div>
@@ -280,7 +249,7 @@ export function AdminBanners() {
 
               <div className="modal-actions">
                 <button type="button" className="admin-btn secondary" onClick={() => {setShowModal(false); resetForm();}} disabled={saving}>Cancelar</button>
-                <button type="submit" className="admin-btn primary" disabled={saving || uploading}>
+                <button type="submit" className="admin-btn primary" disabled={saving}>
                   {saving ? 'Salvando...' : 'Salvar Agendamento'}
                 </button>
               </div>

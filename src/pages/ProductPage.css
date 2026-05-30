@@ -395,3 +395,34 @@
   }
 }
 
+@media (max-width: 480px) {
+  .pdp-container {
+    padding: 24px 4%;
+  }
+
+  .pdp-title {
+    font-size: 1.5rem;
+  }
+
+  .pdp-price {
+    font-size: 2rem;
+  }
+
+  .pdp-buy-btn {
+    padding: 16px 20px;
+    font-size: 1.1rem;
+    position: sticky;
+    bottom: 16px;
+    z-index: 10;
+  }
+  
+  .pdp-variant-btn {
+    min-height: 44px; /* Touch target */
+  }
+
+  .pdp-description-content {
+    padding: 20px;
+    font-size: 1rem;
+  }
+}
+

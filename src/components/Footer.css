@@ -80,3 +80,19 @@
   font-size: 0.85rem;
   color: #ccd6f6;
 }
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 32px;
+  }
+  
+  .footer-brand, .footer-links-group {
+    min-width: 100%;
+  }
+
+  .footer-links a {
+    display: block;
+    padding: 8px 0; /* Larger touch targets */
+  }
+}

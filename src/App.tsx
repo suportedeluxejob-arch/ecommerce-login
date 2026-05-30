@@ -6,7 +6,9 @@ import { ProductPage } from './pages/ProductPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { CategoryPage } from './pages/CategoryPage';
 import { AdminLayout } from './pages/admin/AdminLayout';
-import { AdminDashboard } from './pages/admin/AdminDashboard';
+// Lazy load AdminDashboard so it doesn't crash the storefront if it has issues
+import { lazy, Suspense } from 'react';
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 import { AdminProducts } from './pages/admin/AdminProducts';
 import { AdminOrders } from './pages/admin/AdminOrders';
 import { AdminBanners } from './pages/admin/AdminBanners';
@@ -84,7 +86,7 @@ function App() {
 
               {/* Admin Routes — protected */}
               <Route path="/admin" element={<AdminGuard />}>
-                <Route index element={<AdminDashboard />} />
+                <Route index element={<Suspense fallback={<div>Loading...</div>}><AdminDashboard /></Suspense>} />
                 <Route path="produtos" element={<AdminProducts />} />
                 <Route path="pedidos" element={<AdminOrders />} />
                 <Route path="banners" element={<AdminBanners />} />

@@ -8,6 +8,8 @@ import { useGeolocation } from '../hooks/useGeolocation';
 import { ProductFAQ } from '../components/ProductFAQ';
 import { GiftBadge } from '../components/GiftBadge';
 import { ProductFeedback } from '../components/ProductFeedback';
+import { StatusCard } from '../components/StatusCard';
+import { Truck } from 'lucide-react';
 import './ProductPage.css';
 
 type VariantItem = { name: string; type: string; image?: string };
@@ -249,6 +251,13 @@ export function ProductPage() {
           )}
 
           <img src="/trust-banner.png" alt="Compra Garantida - Entrega Rápida" className="pdp-ml-trust-banner" />
+
+          <StatusCard
+            icon={<Truck size={28} color="var(--cta-green)" />}
+            title="Frete Grátis"
+            description="Para todo o Brasil por tempo limitado."
+            className="my-4"
+          />
 
           <button className="pdp-buy-btn" onClick={handleAddToCart}>
             <ShoppingCart size={22} />

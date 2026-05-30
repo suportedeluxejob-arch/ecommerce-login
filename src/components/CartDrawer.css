@@ -228,5 +228,15 @@
     width: 64px;
     height: 64px;
   }
+
+  .qty-controls button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .remove-item-btn {
+    min-height: 44px;
+    padding: 8px 0;
+  }
 }
 

@@ -1,0 +1,71 @@
+.status-card {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.status-card-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: var(--cta-green, #00A86B);
+  margin-bottom: 0.5rem;
+}
+
+.status-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.status-card-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--trust-navy, #2B3A67);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.status-card-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.status-card-children {
+  margin-top: 1rem;
+}
+
+.status-card-illustration-wrap {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  width: 120px;
+  height: 120px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.1;
+}
+
+.status-card-illustration-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
