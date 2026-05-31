@@ -39,7 +39,7 @@ export function Header() {
   return (
     <header className="header-container">
       <div className="top-bar">
-        <span>Bússola Kids: A direção certa para o seu filho. | Frete Grátis para todo o Brasil</span>
+        <span>Frete Grátis para todo o Brasil</span>
       </div>
       
       <div className="main-header">
