@@ -26,15 +26,16 @@ import './App.css';
 function StorefrontLayout() {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  const isCheckoutPage = location.pathname === '/checkout';
 
   return (
     <>
-      <Header />
-      <CartDrawer />
+      {!isCheckoutPage && <Header />}
+      {!isCheckoutPage && <CartDrawer />}
       <div className="store-content">
         <Outlet />
       </div>
-      <Footer />
+      {!isCheckoutPage && <Footer />}
       {isHomePage && <ChatDock />}
     </>
   );
