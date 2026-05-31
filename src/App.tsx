@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
@@ -24,6 +24,9 @@ import './App.css';
 
 // Storefront layout includes Header and Footer
 function StorefrontLayout() {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
   return (
     <>
       <Header />
@@ -32,7 +35,7 @@ function StorefrontLayout() {
         <Outlet />
       </div>
       <Footer />
-      <ChatDock />
+      {isHomePage && <ChatDock />}
     </>
   );
 }
