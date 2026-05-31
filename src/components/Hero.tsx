@@ -5,6 +5,7 @@ import './Hero.css';
 
 export function Hero() {
   const [banners, setBanners] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchActiveBanners() {
@@ -28,10 +29,24 @@ export function Hero() {
         setBanners(activeBanners);
       } catch (error) {
         console.error("Erro ao buscar banners ativos:", error);
+      } finally {
+        setLoading(false);
       }
     }
     fetchActiveBanners();
   }, []);
+
+  if (loading) {
+    return (
+      <section className="hero-section">
+        <div className="hero-grid">
+          <div className="hero-skeleton-item hero-main" />
+          <div className="hero-skeleton-item hero-side-top" />
+          <div className="hero-skeleton-item hero-side-bottom" />
+        </div>
+      </section>
+    );
+  }
 
   const mainBanner = banners['hero_main'] || {
     imageUrl: '/hero-main.png',
