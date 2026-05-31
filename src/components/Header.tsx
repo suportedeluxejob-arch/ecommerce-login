@@ -43,10 +43,10 @@ export function Header() {
       </div>
       
       <div className="main-header">
+        <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(true)}>
+          <Menu size={24} />
+        </button>
         <div className="logo-container">
-          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(true)}>
-            <Menu size={24} />
-          </button>
           <Link to="/" className="logo">
             <Compass size={28} className="logo-icon" />
             Bússola <span className="logo-highlight">Kids</span>
