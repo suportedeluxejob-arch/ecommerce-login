@@ -104,7 +104,7 @@ export function ChatDock() {
     if (lower.match(/preço|valor|quanto|caro|barato|desconto|promo/)) {
       reply = `Temos produtos com até 47% OFF. Navegue pela loja e veja as etiquetas de desconto! 🏷️`;
     } else if (lower.match(/frete|entrega|prazo|envio/)) {
-      reply = `Frete grátis acima de R$199. Capitais: 3–5 dias úteis. Interior: 5–10 dias. 🚚`;
+      reply = `Frete grátis para todo o Brasil. Capitais: 3–5 dias úteis. Interior: 5–10 dias. 🚚`;
     } else if (lower.match(/beb[eê]|0 a 1|0-1|newborn/)) {
       reply = `Para bebês de 0 a 1 ano: móbiles, tapetes de atividades e chocalhos são os queridinhos — todos com Inmetro. 👶`;
     } else if (lower.match(/2 ano|3 ano|4 ano|toddler/)) {
