@@ -5,6 +5,8 @@ import { HomePage } from './pages/HomePage';
 import { ProductPage } from './pages/ProductPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { CategoryPage } from './pages/CategoryPage';
+import { ProductsPage } from './pages/ProductsPage';
+import { SearchPage } from './pages/SearchPage';
 import { AdminLayout } from './pages/admin/AdminLayout';
 // Lazy load AdminDashboard so it doesn't crash the storefront if it has issues
 import { lazy, Suspense } from 'react';
@@ -77,6 +79,8 @@ function App() {
               <Route path="/" element={<StorefrontLayout />}>
                 <Route index element={<HomePage />} />
                 <Route path="produto/:id" element={<ProductPage />} />
+                <Route path="produtos" element={<ProductsPage />} />
+                <Route path="busca" element={<SearchPage />} />
                 <Route path="checkout" element={<CheckoutPage />} />
                 <Route path="categoria/:slug" element={<CategoryPage />} />
               </Route>

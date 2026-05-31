@@ -173,13 +173,18 @@ export function ProductPage() {
         <div className="pdp-info">
           <div className="pdp-rating">
             <div className="stars">
-              <Star size={18} fill="var(--cta-orange)" color="var(--cta-orange)" />
-              <Star size={18} fill="var(--cta-orange)" color="var(--cta-orange)" />
-              <Star size={18} fill="var(--cta-orange)" color="var(--cta-orange)" />
-              <Star size={18} fill="var(--cta-orange)" color="var(--cta-orange)" />
-              <Star size={18} fill="var(--cta-orange)" color="var(--cta-orange)" />
+              {[...Array(5)].map((_, i) => (
+                <Star 
+                  key={i} 
+                  size={18} 
+                  fill={i < Math.round(product.ratingValue || 5) ? "var(--cta-orange)" : "none"} 
+                  color={i < Math.round(product.ratingValue || 5) ? "var(--cta-orange)" : "#CBD5E1"} 
+                />
+              ))}
             </div>
-            <span className="pdp-reviews-count">(24 avaliações de clientes)</span>
+            <span className="pdp-reviews-count">
+              {(product.ratingValue || 5).toFixed(1)} ({product.reviewsCount ?? 24} avaliações de clientes)
+            </span>
           </div>
 
           {/* ── Promo Badge (effeito02) ── */}
@@ -250,7 +255,6 @@ export function ProductPage() {
             </div>
           )}
 
-          <img src="/trust-banner.png" alt="Compra Garantida - Entrega Rápida" className="pdp-ml-trust-banner" />
 
           <StatusCard
             icon={<Truck size={28} color="var(--cta-green)" />}

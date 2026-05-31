@@ -21,7 +21,7 @@ const StatusCard = React.forwardRef<HTMLDivElement, StatusCardProps>(
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeInOut" }}
         whileHover={{ y: -4, transition: { duration: 0.2 } }}
-        {...props}
+        {...(props as any)}
       >
         <div className="status-card-inner">
           {icon && <div className="status-card-icon">{icon}</div>}

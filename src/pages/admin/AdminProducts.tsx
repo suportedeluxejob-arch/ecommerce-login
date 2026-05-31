@@ -48,7 +48,9 @@ export function AdminProducts() {
   // Variants
   const [variants, setVariants] = useState<VariantItem[]>([]);
 
-
+  // Rating Config
+  const [ratingValue, setRatingValue] = useState<string>('5.0');
+  const [reviewsCount, setReviewsCount] = useState<string>('24');
 
   useEffect(() => {
     fetchProducts();
@@ -96,7 +98,9 @@ export function AdminProducts() {
           category: 'geral',
           images: prod.images,
           isActive: true,
-          tags: prod.tags
+          tags: prod.tags,
+          ratingValue: 5.0,
+          reviewsCount: 24
         });
       }
       fetchProducts();
@@ -148,6 +152,8 @@ export function AdminProducts() {
         giftBadge: { enabled: giftBadgeEnabled },
         faqItems: faqItems.filter(f => f.question.trim() && f.answer.trim()),
         variants: variants.filter(v => v.name.trim() && v.type.trim()),
+        ratingValue: parseFloat(ratingValue.toString()) || 5.0,
+        reviewsCount: parseInt(reviewsCount.toString()) || 0,
       };
 
       if (editingId) {
@@ -205,6 +211,8 @@ export function AdminProducts() {
     setGiftBadgeEnabled(false);
     setFaqItems(DEFAULT_FAQ);
     setVariants([]);
+    setRatingValue('5.0');
+    setReviewsCount('24');
   };
 
   const handleNewClick = () => {
@@ -228,6 +236,8 @@ export function AdminProducts() {
     setGiftBadgeEnabled(product.giftBadge?.enabled || false);
     setFaqItems(product.faqItems && product.faqItems.length > 0 ? product.faqItems : DEFAULT_FAQ);
     setVariants(product.variants && product.variants.length > 0 ? product.variants : []);
+    setRatingValue(product.ratingValue?.toString() || '5.0');
+    setReviewsCount(product.reviewsCount?.toString() || '24');
     setShowModal(true);
   };
 
@@ -413,6 +423,18 @@ export function AdminProducts() {
                   </div>
                 )}
                 <span className="input-hint">Cole o link da imagem que já está hospedada e clique em "Adicionar". Adicione quantas imagens quiser.</span>
+              </div>
+
+              {/* ── RATINGS (Avaliações) ── */}
+              <div className="form-row">
+                <div className="form-group flex-1">
+                  <label>Nota Média (ex: 4.8)</label>
+                  <input type="number" step="0.1" min="0" max="5" value={ratingValue} onChange={(e) => setRatingValue(e.target.value)} required />
+                </div>
+                <div className="form-group flex-1">
+                  <label>Total de Avaliações</label>
+                  <input type="number" step="1" min="0" value={reviewsCount} onChange={(e) => setReviewsCount(e.target.value)} required />
+                </div>
               </div>
 
               <div className="form-group">

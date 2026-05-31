@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../firebaseConfig';
-import { Plus, Calendar, Edit, Trash2, Upload } from 'lucide-react';
+import { db } from '../../firebaseConfig';
+import { Plus, Calendar, Edit, Trash2 } from 'lucide-react';
 import './AdminBanners.css';
 
 export function AdminBanners() {

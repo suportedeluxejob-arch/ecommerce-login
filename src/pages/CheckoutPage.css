@@ -114,7 +114,7 @@ input:focus {
 .payment-method {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   padding: 16px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -125,6 +125,18 @@ input:focus {
 .payment-method.selected {
   border-color: var(--cta-orange);
   background-color: #fff9f6;
+}
+
+.payment-method-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  color: var(--trust-navy);
+}
+
+.payment-icon {
+  color: var(--cta-orange);
 }
 
 /* ── Credit Card Panel ── */
@@ -326,5 +338,205 @@ input:focus {
     font-size: 1.05rem;
     padding: 16px;
   }
+}
+
+/* ── Checkout Modals ── */
+.checkout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 11000;
+  padding: 20px;
+}
+
+.checkout-modal {
+  background: white;
+  width: 100%;
+  max-width: 480px;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: modal-enter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modal-enter {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.checkout-modal h2 {
+  font-size: 1.5rem;
+  color: var(--trust-navy);
+  margin-bottom: 12px;
+}
+
+.checkout-modal p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.qr-code-container {
+  background: #fff;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.qr-code-container img {
+  width: 200px;
+  height: 200px;
+  display: block;
+}
+
+.pix-copy-container {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.pix-copy-container p {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--trust-navy);
+  margin-bottom: 8px;
+}
+
+.pix-copy-box {
+  display: flex;
+  gap: 8px;
+}
+
+.pix-copy-box input {
+  flex: 1;
+  background-color: #f8fafc;
+  color: var(--text-dark);
+  font-family: monospace;
+  font-size: 0.85rem;
+  padding: 12px;
+  border-color: #e2e8f0;
+}
+
+.pix-copy-box button {
+  background-color: var(--trust-navy);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.pix-copy-box button:hover {
+  background-color: #1e293b;
+}
+
+/* ── Autofill Notification Banner ── */
+.autofill-notification-banner {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin: 24px 5% 0 5%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #15803d;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.05);
+  animation: slide-down 0.4s ease-out;
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sparkles-icon {
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+/* ── Exclusively PIX Layout (1-Step) ── */
+.payment-methods-single-pix {
+  margin-top: 16px;
+}
+
+.pix-single-option-card {
+  background-color: #fff;
+  border: 2px solid #059669;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.pix-single-option-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #059669 0%, #34d399 100%);
+}
+
+.pix-single-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.pix-single-header .payment-icon {
+  color: #059669;
+}
+
+.pix-single-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pix-single-title span:first-child {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--trust-navy);
+}
+
+.badge-promo-discount {
+  font-size: 0.7rem;
+  font-weight: 800;
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 2px 8px;
+  border-radius: 20px;
+  width: fit-content;
+  letter-spacing: 0.5px;
+}
+
+.pix-single-description {
+  font-size: 0.88rem;
+  color: var(--text-dark);
+  line-height: 1.5;
+  margin: 0;
 }
 

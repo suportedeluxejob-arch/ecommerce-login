@@ -1,36 +1,54 @@
-import { ShoppingCart, Star } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import { ShoppingCart, Star } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import { motion } from 'framer-motion';
-import './ProductShowcase.css';
 
-export function ProductShowcase() {
-  const { addToCart, setIsCartOpen } = useCart();
+export function SearchPage() {
+  const [searchParams] = useSearchParams();
+  const searchTerm = searchParams.get('q') || '';
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { addToCart, setIsCartOpen } = useCart();
 
   useEffect(() => {
     async function fetchProducts() {
+      if (!searchTerm) {
+        setProducts([]);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
       try {
         const q = query(collection(db, 'products'), where('isActive', '==', true));
-        const querySnapshot = await getDocs(q);
+        const snapshot = await getDocs(q);
         const prods: any[] = [];
-        querySnapshot.forEach((doc) => {
-          prods.push({ id: doc.id, ...doc.data() });
+        const termLower = searchTerm.toLowerCase();
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (
+            data.name.toLowerCase().includes(termLower) || 
+            data.description?.toLowerCase().includes(termLower) ||
+            data.tags?.some((t: string) => t.toLowerCase().includes(termLower))
+          ) {
+            prods.push({ id: doc.id, ...data });
+          }
         });
+        
         setProducts(prods);
-      } catch (error) {
-        console.error("Erro ao buscar produtos da vitrine:", error);
+      } catch (err) {
+        console.error("Erro ao buscar produtos:", err);
       } finally {
         setLoading(false);
       }
     }
     fetchProducts();
-  }, []);
+  }, [searchTerm]);
 
   const handleAddToCart = (e: React.MouseEvent, product: any) => {
     e.preventDefault();
@@ -45,17 +63,17 @@ export function ProductShowcase() {
   };
 
   return (
-    <section className="showcase-section">
-      <div className="showcase-header">
-        <h2 className="section-title">Mais Vendidos</h2>
-        <a href="/produtos" className="view-all">Ver todos &rarr;</a>
+    <div className="products-page-container">
+      <div className="products-header" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
+        <h1>Resultados da Busca</h1>
+        <p>Você buscou por: <strong>"{searchTerm}"</strong></p>
       </div>
-      
+
       <div className="product-grid">
         {loading ? (
-          <div className="loading-products">Carregando vitrine...</div>
+          <div className="loading-products">Buscando produtos...</div>
         ) : products.length === 0 ? (
-          <div className="empty-products">Nenhum produto disponível no momento.</div>
+          <div className="empty-products">Nenhum produto encontrado para "{searchTerm}".</div>
         ) : (
           products.map((product, index) => (
             <motion.div 
@@ -63,7 +81,7 @@ export function ProductShowcase() {
               className="product-card"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.05, ease: "easeInOut" }}
+              transition={{ duration: 0.4, delay: index * 0.05 }}
               onClick={() => navigate(`/produto/${product.id}`)}
             >
               <div className="product-image-container">
@@ -71,12 +89,6 @@ export function ProductShowcase() {
                   <span className="product-badge badge-discount">
                     -{Math.round((1 - product.price / product.originalPrice) * 100)}%
                   </span>
-                )}
-                {!product.originalPrice && product.tags?.includes('lancamento') && (
-                  <span className="product-badge badge-new">Novo</span>
-                )}
-                {!product.originalPrice && product.tags?.includes('promocao') && (
-                  <span className="product-badge badge-sale">Oferta</span>
                 )}
                 <img src={product.images?.[0]} alt={product.name} className="product-image" />
               </div>
@@ -98,7 +110,6 @@ export function ProductShowcase() {
                     {(product.ratingValue || 5).toFixed(1)} ({product.reviewsCount ?? 24})
                   </span>
                 </div>
-                
                 <h3 className="product-name">{product.name}</h3>
                 
                 <div className="product-price-row">
@@ -128,6 +139,6 @@ export function ProductShowcase() {
           ))
         )}
       </div>
-    </section>
+    </div>
   );
 }

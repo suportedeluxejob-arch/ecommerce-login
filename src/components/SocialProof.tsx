@@ -1,4 +1,4 @@
-import { ShieldCheck, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import './SocialProof.css';
 
 const testimonials = [
@@ -113,23 +113,6 @@ function TestimonialsColumn({ items, duration }: { items: typeof testimonials; d
 export function SocialProof() {
   return (
     <section className="social-proof-section">
-      {/* Badges de confiança */}
-      <div className="security-badges">
-        <div className="badge-item">
-          <ShieldCheck size={32} color="var(--cta-green)" />
-          <div className="badge-text">
-            <h4>Compra Segura</h4>
-            <p>Seus dados estão protegidos</p>
-          </div>
-        </div>
-        <div className="badge-item">
-          <img src="https://logodownload.org/wp-content/uploads/2019/07/inmetro-logo-1.png" alt="Inmetro" className="inmetro-logo" />
-          <div className="badge-text">
-            <h4>Certificado Inmetro</h4>
-            <p>Brinquedos aprovados e seguros</p>
-          </div>
-        </div>
-      </div>
 
       {/* Header */}
       <div className="sp-header">

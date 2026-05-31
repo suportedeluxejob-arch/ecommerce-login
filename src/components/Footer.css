@@ -6,71 +6,58 @@
 
 .footer-content {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 40px;
+  justify-content: center;
+  align-items: center;
   padding: 0 5%;
   max-width: 1400px;
-  margin: 0 auto 40px auto;
+  margin: 0 auto 60px auto;
 }
 
-.footer-brand {
-  flex: 2;
-  min-width: 300px;
+.footer-brand-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 600px;
 }
 
 .footer-logo {
   font-family: 'Poppins', sans-serif;
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .footer-description {
   color: #ccd6f6;
   line-height: 1.6;
-  font-size: 0.95rem;
-  max-width: 400px;
-}
-
-.footer-links-group {
-  flex: 1;
-  min-width: 200px;
-}
-
-.footer-title {
-  color: white;
   font-size: 1.1rem;
-  margin-bottom: 20px;
-  position: relative;
-  padding-bottom: 8px;
+  margin-bottom: 32px;
 }
 
-.footer-title::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 40px;
-  height: 2px;
-  background-color: var(--cta-orange);
+.footer-wpp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #25D366; /* WhatsApp Green */
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 14px 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: transform 0.2s, background-color 0.2s;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
 }
 
-.footer-links {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.footer-links a {
-  color: #ccd6f6;
-  font-size: 0.9rem;
-  transition: color 0.2s;
-}
-
-.footer-links a:hover {
-  color: var(--cta-orange);
+.footer-wpp-btn:hover {
+  background-color: #1EBE5D;
+  transform: translateY(-2px);
+  color: white;
 }
 
 .footer-bottom {
@@ -83,16 +70,19 @@
 
 @media (max-width: 768px) {
   .footer-content {
-    flex-direction: column;
-    gap: 32px;
-  }
-  
-  .footer-brand, .footer-links-group {
-    min-width: 100%;
+    padding: 0 8%;
   }
 
-  .footer-links a {
-    display: block;
-    padding: 8px 0; /* Larger touch targets */
+  .footer-logo {
+    font-size: 1.8rem;
+  }
+  
+  .footer-description {
+    font-size: 1rem;
+  }
+
+  .footer-wpp-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
