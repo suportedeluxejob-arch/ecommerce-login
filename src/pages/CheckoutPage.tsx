@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { Compass, ShieldCheck, Lock, QrCode, Loader2, CheckCircle2, ShieldAlert, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -13,6 +13,11 @@ export function CheckoutPage() {
   const [orderStatus, setOrderStatus] = useState<OrderStatus>('typing');
   const [loadingMessage, setLoadingMessage] = useState('');
   const [createdOrderId, setCreatedOrderId] = useState('');
+
+  // Guard: Redirect to storefront if cart is empty and order is not yet complete
+  if (items.length === 0 && orderStatus !== 'success') {
+    return <Navigate to="/produtos" replace />;
+  }
 
   // Form states
   const [name, setName] = useState('');
