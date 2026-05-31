@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
-import { ShoppingCart, Star } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { ShoppingCart, Star, ChevronLeft, ChevronRight, Truck } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useCart } from '../context/CartContext';
@@ -9,7 +9,6 @@ import { ProductFAQ } from '../components/ProductFAQ';
 import { GiftBadge } from '../components/GiftBadge';
 import { ProductFeedback } from '../components/ProductFeedback';
 import { StatusCard } from '../components/StatusCard';
-import { Truck } from 'lucide-react';
 import './ProductPage.css';
 
 type VariantItem = { name: string; type: string; image?: string };
@@ -46,6 +45,44 @@ export function ProductPage() {
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   // Which image to show as main (overridden by variant selection)
   const [mainImage, setMainImage] = useState<string>('');
+  const [currentIdx, setCurrentIdx] = useState<number>(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const scrollToImage = (index: number) => {
+    if (sliderRef.current && product?.images) {
+      const slider = sliderRef.current;
+      const slide = slider.children[index] as HTMLElement;
+      if (slide) {
+        slider.scrollTo({
+          left: slide.offsetLeft,
+          behavior: 'smooth',
+        });
+      }
+      setCurrentIdx(index);
+    }
+  };
+
+  const handleScroll = () => {
+    if (sliderRef.current && product?.images) {
+      const { scrollLeft, offsetWidth } = sliderRef.current;
+      if (offsetWidth > 0) {
+        const index = Math.round(scrollLeft / offsetWidth);
+        if (index >= 0 && index < product.images.length && index !== currentIdx) {
+          setCurrentIdx(index);
+          setMainImage(product.images[index]);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (product?.images && mainImage) {
+      const idx = product.images.indexOf(mainImage);
+      if (idx !== -1 && idx !== currentIdx) {
+        scrollToImage(idx);
+      }
+    }
+  }, [mainImage]);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -139,8 +176,64 @@ export function ProductPage() {
       <div className="pdp-grid">
         {/* Left Column: Image Gallery */}
         <div className="pdp-gallery">
-          <div className="main-image-container">
-            <img src={mainImage || product.images[0]} alt={product.name} className="pdp-main-image" />
+          <div className="pdp-carousel-container">
+            {/* Navigation arrows (desktop only via CSS display) */}
+            {product.images && product.images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className="pdp-nav-arrow left"
+                  onClick={() => scrollToImage(currentIdx - 1)}
+                  disabled={currentIdx === 0}
+                  aria-label="Imagem anterior"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  type="button"
+                  className="pdp-nav-arrow right"
+                  onClick={() => scrollToImage(currentIdx + 1)}
+                  disabled={currentIdx === product.images.length - 1}
+                  aria-label="Próxima imagem"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </>
+            )}
+
+            {/* Slider track */}
+            <div
+              className="pdp-carousel-slides"
+              ref={sliderRef}
+              onScroll={handleScroll}
+            >
+              {product.images && product.images.length > 0 ? (
+                product.images.map((img: string, idx: number) => (
+                  <div key={idx} className="pdp-carousel-slide">
+                    <img src={img} alt={`${product.name} - Foto ${idx + 1}`} className="pdp-carousel-image" />
+                  </div>
+                ))
+              ) : (
+                <div className="pdp-carousel-slide">
+                  <img src={mainImage} alt={product.name} className="pdp-carousel-image" />
+                </div>
+              )}
+            </div>
+
+            {/* Dots indicator (mobile optimized) */}
+            {product.images && product.images.length > 1 && (
+              <div className="pdp-carousel-dots">
+                {product.images.map((_: any, idx: number) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    className={`pdp-carousel-dot ${currentIdx === idx ? 'active' : ''}`}
+                    onClick={() => scrollToImage(idx)}
+                    aria-label={`Ir para imagem ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Thumbnail strip — clicking a thumbnail resets to that image */}
@@ -150,8 +243,11 @@ export function ProductPage() {
                 <button
                   key={idx}
                   type="button"
-                  className={`pdp-thumb-btn ${mainImage === img ? 'active' : ''}`}
-                  onClick={() => setMainImage(img)}
+                  className={`pdp-thumb-btn ${currentIdx === idx ? 'active' : ''}`}
+                  onClick={() => {
+                    setMainImage(img);
+                    scrollToImage(idx);
+                  }}
                 >
                   <img src={img} alt={`Foto ${idx + 1}`} />
                 </button>
