@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import {
   Clock,
@@ -21,6 +21,7 @@ export function AdminOrders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+  const [activeTab, setActiveTab] = useState<'board' | 'scams'>('board');
 
   // Checklist states
   const [chkValueReceived, setChkValueReceived] = useState(false);
@@ -72,6 +73,33 @@ export function AdminOrders() {
     }
   };
 
+  const deleteOrder = async (orderId: string) => {
+    if (window.confirm("⚠️ ATENÇÃO: Tem certeza que deseja EXCLUIR DEFINITIVAMENTE este registro? Isso o removerá permanentemente do banco de dados de pedidos e da contabilidade da loja.")) {
+      try {
+        await deleteDoc(doc(db, 'orders', orderId));
+        setSelectedOrder(null);
+        fetchOrders();
+      } catch (error) {
+        console.error("Erro ao excluir pedido:", error);
+        alert("Erro ao excluir o pedido.");
+      }
+    }
+  };
+
+  const restoreOrder = async (orderId: string) => {
+    try {
+      await updateDoc(doc(db, 'orders', orderId), {
+        status: 'pagamento_pendente'
+      });
+      fetchOrders();
+      if (selectedOrder && selectedOrder.id === orderId) {
+        setSelectedOrder((prev: any) => ({ ...prev, status: 'pagamento_pendente' }));
+      }
+    } catch (error) {
+      console.error("Erro ao restaurar pedido:", error);
+    }
+  };
+
   const columns = [
     { id: 'pagamento_pendente', title: 'Pendente', icon: <Clock size={18} />, color: '#f59e0b' },
     { id: 'preparando', title: 'Preparando', icon: <Box size={18} />, color: '#3b82f6' },
@@ -111,13 +139,34 @@ export function AdminOrders() {
 
       <div className="admin-page-header">
         <h1 className="admin-title">Quadro de Pedidos</h1>
+        <div className="admin-tabs">
+          <button 
+            className={`admin-tab-btn ${activeTab === 'board' ? 'active' : ''}`}
+            onClick={() => setActiveTab('board')}
+          >
+            <ShoppingCart size={16} />
+            <span>Pedidos Ativos</span>
+          </button>
+          <button 
+            className={`admin-tab-btn ${activeTab === 'scams' ? 'active font-bold' : ''}`}
+            onClick={() => setActiveTab('scams')}
+            style={{ 
+              backgroundColor: activeTab === 'scams' ? '#fee2e2' : undefined,
+              borderColor: activeTab === 'scams' ? '#ef4444' : undefined,
+              color: activeTab === 'scams' ? '#dc2626' : undefined 
+            }}
+          >
+            <AlertTriangle size={16} />
+            <span>Tentativas de Golpe ({orders.filter(o => o.status === 'golpe').length})</span>
+          </button>
+        </div>
       </div>
 
       {loading ? (
         <div className="loading-container">
           <p>Carregando pedidos do Firebase...</p>
         </div>
-      ) : (
+      ) : activeTab === 'board' ? (
         <div className="kanban-board">
           {columns.map(col => (
             <div key={col.id} className="kanban-column">
@@ -172,6 +221,7 @@ export function AdminOrders() {
                         <option value="preparando">Preparar</option>
                         <option value="enviado">Enviar</option>
                         <option value="entregue">Entregue</option>
+                        <option value="golpe">⚠️ Golpe / Fraude</option>
                       </select>
                     </div>
                   </div>
@@ -179,6 +229,71 @@ export function AdminOrders() {
               </div>
             </div>
           ))}
+        </div>
+      ) : (
+        <div className="scams-container">
+          <div className="scams-header-info">
+            <AlertTriangle size={20} style={{ color: '#dc2626', flexShrink: 0 }} />
+            <p>
+              Estes registros foram identificados como **tentativas de fraude ou pedidos falsos**. Eles estão arquivados separadamente para que não afetem a contabilidade e os indicadores reais de faturamento da sua loja.
+            </p>
+          </div>
+
+          {orders.filter(o => o.status === 'golpe').length === 0 ? (
+            <div className="empty-scams-state">
+              <CheckCircle size={48} style={{ color: '#10b981', marginBottom: 16 }} />
+              <h3>Nenhuma tentativa de golpe registrada!</h3>
+              <p>Sua loja está operando com segurança e sem fraudes detectadas.</p>
+            </div>
+          ) : (
+            <div className="scams-grid">
+              {orders.filter(o => o.status === 'golpe').map(order => (
+                <div key={order.id} className="scam-card">
+                  <div className="scam-card-header">
+                    <div className="scam-id-badge">
+                      <strong>#{order.id.slice(0, 8).toUpperCase()}</strong>
+                      <span className="scam-date">{formatOrderDate(order.createdAt)}</span>
+                    </div>
+                    <div className="scam-amount">{fmt(order.totalAmount || 0)}</div>
+                  </div>
+
+                  <div className="scam-buyer-details">
+                    <h4>{order.customerName}</h4>
+                    <p><strong>E-mail:</strong> {order.customerEmail || 'Não informado'}</p>
+                    <p><strong>CPF:</strong> {order.customerCPF || 'Não informado'}</p>
+                    <p><strong>WhatsApp:</strong> {order.customerPhone || 'Não informado'}</p>
+                  </div>
+
+                  <div className="scam-actions">
+                    {order.customerPhone && (
+                      <a
+                        href={getWhatsAppLink(order.customerPhone, order.id)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="whatsapp-contact-btn btn-sm"
+                      >
+                        <MessageSquare size={12} /> WhatsApp
+                      </a>
+                    )}
+                    <button 
+                      onClick={() => restoreOrder(order.id)} 
+                      className="scam-btn-restore"
+                      title="Restaurar este pedido para a fila de pendentes"
+                    >
+                      Restaurar Pedido
+                    </button>
+                    <button 
+                      onClick={() => deleteOrder(order.id)} 
+                      className="scam-btn-delete"
+                      title="Excluir este pedido definitivamente do banco de dados"
+                    >
+                      Excluir Definitivo
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -310,6 +425,7 @@ export function AdminOrders() {
                       <option value="preparando">Preparando Envio</option>
                       <option value="enviado">Enviado / Transportadora</option>
                       <option value="entregue">Entregue</option>
+                      <option value="golpe">⚠️ Golpe / Fraude Confirmado</option>
                     </select>
                   </div>
                 </section>
@@ -364,12 +480,18 @@ export function AdminOrders() {
                 </section>
 
                 {/* Quick actions */}
-                <div style={{ marginTop: 20 }}>
+                <div className="modal-quick-actions">
                   <button
                     className="modal-action-close-btn"
                     onClick={() => setSelectedOrder(null)}
                   >
                     Voltar para o Quadro
+                  </button>
+                  <button
+                    className="modal-action-delete-btn"
+                    onClick={() => deleteOrder(selectedOrder.id)}
+                  >
+                    Excluir Permanentemente
                   </button>
                 </div>
               </div>
